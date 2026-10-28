@@ -1,0 +1,112 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   DESIGN TOKENS — provisional identity (navy + soft teal). Change the brand here.
+   Every component uses these names (bg-brand, text-ink, rounded-card…), so a new
+   palette or font only needs edits in this block and in app/[lang]/layout.tsx.
+   Contrast: ink/muted/brand/accent-strong all pass WCAG AA on white and canvas.
+   ───────────────────────────────────────────────────────────────────────────── */
+@theme {
+  /* Brand */
+  --color-brand: #12325b; /* navy — primary buttons, headings */
+  --color-brand-strong: #0b2242; /* hover, footer */
+  --color-brand-soft: #e7eef7; /* tinted backgrounds */
+  --color-accent: #138a80; /* soft teal — icons, highlights (large elements only) */
+  --color-accent-strong: #0b6b63; /* teal for text and buttons (AA on white) */
+  --color-accent-soft: #e3f3f1;
+
+  /* Neutrals */
+  --color-ink: #14243a; /* body text */
+  --color-muted: #4a5a70; /* secondary text */
+  --color-line: #d9e0e8; /* borders */
+  --color-canvas: #f4f6f9; /* very light gray section background */
+  --color-surface: #ffffff;
+
+  /* States */
+  --color-danger: #b42318;
+  --color-danger-soft: #fdecea;
+  --color-success: #0b6b3a;
+  --color-success-soft: #e6f4ec;
+  --color-pending: #7a4700;
+  --color-pending-soft: #fff3d6;
+  --color-pending-line: #e0a52e;
+
+  /* Typography (variables set by next/font in the layout) */
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-heading), var(--font-body), ui-sans-serif, system-ui, sans-serif;
+
+  /* Radii */
+  --radius-card: 1.25rem;
+  --radius-control: 0.75rem;
+
+  /* Layout */
+  --container-page: 72rem;
+  --spacing-section: 5rem;
+}
+
+/* Base styles live in the "base" layer so utility classes (text-white…) can override them. */
+@layer base {
+/* Base size 18px: easier reading for older visitors. All rem values scale with it. */
+html {
+  font-size: 112.5%;
+  color-scheme: light;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  color: var(--color-brand);
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* Clear, consistent keyboard focus everywhere. */
+:focus-visible {
+  outline: 3px solid var(--color-accent-strong);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Keep headings visible below the sticky header when jumping to an anchor. */
+[id] {
+  scroll-margin-top: 6rem;
+}
+
+/* FAQ disclosure: hide the default marker, we draw our own chevron. */
+summary {
+  list-style: none;
+}
+summary::-webkit-details-marker {
+  display: none;
+}
+details[open] > summary .faq-chevron {
+  transform: rotate(180deg);
+}
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
