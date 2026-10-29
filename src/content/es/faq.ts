@@ -12,10 +12,6 @@ export const faq: QA[] = [
     a: "Sus preguntas, si ya tiene la Parte A o la Parte B de Medicare, la cobertura que tenga por su trabajo o su cónyuge, y los médicos y farmacias que le gustaría conservar. Guarde esta información para la conversación; por favor, no la envíe por el sitio web.",
   },
   {
-    q: "¿Puedo recibir orientación en español?",
-    a: "Este sitio web está disponible en inglés y en español. Las solicitudes enviadas desde las páginas en español se marcan como en español. Los idiomas de atención se indican en la página Sobre Alejandro.",
-  },
-  {
     q: "¿Qué diferencia hay entre Medicare Original y Medicare Advantage?",
     a: "Medicare Original lo administra el gobierno federal e incluye la Parte A y la Parte B. Los planes Medicare Advantage los ofrecen compañías privadas aprobadas por Medicare y combinan la Parte A y la Parte B en un solo plan, a menudo con cobertura de medicamentos. Los costos, las reglas y los beneficios varían según el plan.",
   },

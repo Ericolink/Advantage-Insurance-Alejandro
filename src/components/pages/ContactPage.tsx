@@ -8,7 +8,7 @@ import { getContact } from "@/lib/contact";
 import { fill, getContent } from "@/lib/i18n";
 import { leadTopics, topicLabel } from "@/lib/lead-topics";
 import { showsTpmoProducts, TpmoNotice } from "@/components/content/DisclosureBlock";
-import { CallButton, EmailButton, WhatsAppButton } from "@/components/content/ContactButtons";
+import { CallButton, EmailButton } from "@/components/content/ContactButtons";
 import { PageHero } from "@/components/content/PageHero";
 import { ContactForm } from "@/components/forms/ContactForm";
 import { Scheduler } from "@/components/forms/Scheduler";
@@ -53,20 +53,6 @@ export function ContactPage({ locale }: { locale: Locale }) {
             <CallButton ui={ui} location="contact_page" withNumber={false} className="w-full sm:w-auto" />
             {contact.phone?.pending && <Pending marker={marker} label={ui.pending.phone} />}
           </OptionCard>
-
-          {contact.whatsapp ? (
-            <OptionCard icon="message" title={ui.contact.whatsappTitle}>
-              <WhatsAppButton ui={ui} location="contact_page" className="w-full sm:w-auto" />
-              {contact.whatsapp.pending && <Pending marker={marker} label={ui.pending.whatsapp} />}
-            </OptionCard>
-          ) : (
-            site.whatsapp.status === "pending" &&
-            reviewMode && (
-              <OptionCard icon="message" title={ui.contact.whatsappTitle}>
-                <Pending marker={marker} label={ui.pending.whatsapp} />
-              </OptionCard>
-            )
-          )}
 
           {(contact.email || reviewMode) && (
             <OptionCard icon="mail" title={ui.contact.emailTitle}>

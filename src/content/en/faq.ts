@@ -12,10 +12,6 @@ export const faq: QA[] = [
     a: "Your questions, whether you already have Medicare Part A or Part B, any coverage you have through work or a spouse, and the doctors and pharmacies you would like to keep. Keep this information for the conversation — please do not send it through the website.",
   },
   {
-    q: "Can I get information in Spanish?",
-    a: "This website is available in English and Spanish. A request sent from the Spanish pages is marked as Spanish. The languages of service are listed on the About page.",
-  },
-  {
     q: "What is the difference between Original Medicare and Medicare Advantage?",
     a: "Original Medicare is managed by the federal government and includes Part A and Part B. Medicare Advantage plans are offered by private companies approved by Medicare and combine Part A and Part B in one plan, often with drug coverage. Costs, rules and benefits vary by plan.",
   },
