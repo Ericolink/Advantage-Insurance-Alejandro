@@ -52,7 +52,7 @@ src/
     forms/       ContactForm · Scheduler
   lib/           i18n, SEO, contacto, validación y envío del formulario, analítica
   app/[lang]/    inicio + ruta comodín para todas las páginas internas
-  proxy.ts       "/" → idioma guardado (cookie) o del navegador
+  proxy.ts       "/" → inglés (principal), o español si el visitante ya lo eligió (cookie)
 tests/           node:test
 ```
 
