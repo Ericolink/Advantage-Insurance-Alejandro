@@ -32,6 +32,7 @@ export const ui: UiContent = {
   },
   nav: {
     label: "Navegación principal",
+    home: "Inicio",
     about: "Sobre Alejandro",
     aboutLong: "Sobre Alejandro",
     services: "Servicios",
@@ -216,6 +217,10 @@ export const ui: UiContent = {
     terms: "Términos",
     disclosures: "Avisos",
     analytics: "Preferencias de analítica",
+    independenceLabel: "Aviso de independencia:",
+    coverageLabel: "Información sobre coberturas:",
+    marketingTitle: "Avisos de marketing de productos de seguros",
+    coverageText: "La disponibilidad, los beneficios, los costos y los requisitos de elegibilidad varían según el plan y la ubicación. Consulte la documentación oficial del plan para conocer sus términos y condiciones.",
     rights: "© {year} {brand}.",
   },
   analytics: {

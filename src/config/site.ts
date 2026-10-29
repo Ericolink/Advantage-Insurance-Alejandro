@@ -60,5 +60,27 @@ export const site: SiteConfig = {
 
   // Paste the exact, current wording provided by Alejandro or the compliance contact.
   tpmoDisclaimer: { value: null, status: "pending", note: "Exact current TPMO disclaimer (number of organizations/plans represented)." },
-  marketingDisclaimers: { value: null, status: "pending", note: "Any carrier/FMO-required disclaimers, exactly as approved." },
+  // Spanish text provided on 2026-10-29; English is a translation. Still needs Alejandro's (and any carrier/FMO) approval.
+  marketingDisclaimers: {
+    value: [
+      {
+        en: "The information published on this website is for informational and commercial purposes. The availability of insurance, its benefits, costs, premiums, copays, deductibles and coverage conditions may vary by plan, location and eligibility requirements.",
+        es: "La información publicada en este sitio web tiene fines informativos y comerciales. La disponibilidad de los seguros, sus beneficios, costos, primas, copagos, deducibles y condiciones de cobertura puede variar según el plan, la ubicación y los requisitos de elegibilidad.",
+      },
+      {
+        en: "The information presented does not guarantee approval of an application, enrollment in a plan or specific benefits. Coverage is subject to the terms, conditions and limitations of the applicable policy or plan.",
+        es: "La información presentada no garantiza la aprobación de una solicitud, la inscripción en un plan ni la obtención de beneficios específicos. La cobertura está sujeta a los términos, condiciones y limitaciones de la póliza o del plan correspondiente.",
+      },
+      {
+        en: "Alejandro Alcazar is a private health insurance agent. Mentioning programs, insurance companies or products does not imply government endorsement and does not guarantee that all plans are available in all areas.",
+        es: "Alejandro Alcazar es un agente privado de seguros médicos. La mención de programas, aseguradoras o productos no implica respaldo gubernamental ni garantiza la disponibilidad de todos los planes en todas las áreas.",
+      },
+      {
+        en: "To learn about the applicable benefits, costs, exclusions and conditions, review the official plan documents and confirm the information with an authorized representative.",
+        es: "Para conocer los beneficios, costos, exclusiones y condiciones aplicables, consulte los documentos oficiales del plan y confirme la información con un representante autorizado.",
+      },
+    ],
+    status: "pending",
+    note: "Insurance product marketing notices, plus any carrier/FMO-required disclaimers, exactly as approved.",
+  },
 };

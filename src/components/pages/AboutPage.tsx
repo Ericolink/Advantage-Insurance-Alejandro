@@ -81,7 +81,7 @@ export function AboutPage({ locale }: { locale: Locale }) {
           <section>
             <h2 className="text-h2 font-bold">{ui.about.detailsTitle}</h2>
             <dl className="mt-6 grid gap-6 sm:grid-cols-2">
-              {detail("globe", ui.about.languagesLabel, languages ? languages.map((code) => languageNames[code]).join(" · ") : null, ui.pending.languages, site.languages.status === "pending")}
+              {detail("globe", ui.about.languagesLabel, languages ? languages.map((code) => languageNames[code]).join(" · ") : null, ui.pending.languages, false)}
               {detail("map-pin", ui.about.areaLabel, area?.[locale] ?? null, ui.pending.serviceArea, site.serviceArea.status === "pending")}
               {(hours || site.hours.status === "pending") && detail("clock", ui.about.hoursLabel, hours?.[locale] ?? null, ui.pending.hours, site.hours.status === "pending")}
             </dl>

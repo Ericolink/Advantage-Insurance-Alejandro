@@ -59,7 +59,7 @@ export function Intro({ locale }: { locale: Locale }) {
       <ul className="grid gap-x-10 gap-y-8 sm:grid-cols-2">
         {ui.home.intro.map((item, index) => (
           <li key={item.title} className="flex gap-4">
-            <span className="grid size-12 shrink-0 place-items-center rounded-md bg-white text-navy-900">
+            <span className="grid size-12 shrink-0 place-items-center rounded-md bg-red-600 text-white">
               <Icon name={introIcons[index] ?? "check"} className="size-6" />
             </span>
             <div>
@@ -129,9 +129,7 @@ export function AgentIntro({ locale }: { locale: Locale }) {
             <p className="mt-5 flex flex-wrap items-center gap-2">
               <Icon name="globe" className="size-5 text-navy-900" />
               <span className="font-semibold">{ui.about.languagesLabel}:</span>
-              {languages.map((code) => (code === "es" ? "Español" : "English")).join(" · ")}
-              {site.languages.status === "pending" && <Pending marker={ui.pending.marker} label={ui.pending.languages} />}
-            </p>
+              {languages.map((code) => (code === "es" ? "Español" : "English")).join(" · ")}            </p>
           )}
           <p className="mt-7">
             <Link href={pathFor({ kind: "page", id: "about" }, locale, site)} className={linkClass}>

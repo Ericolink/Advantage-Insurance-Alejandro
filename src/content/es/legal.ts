@@ -61,6 +61,7 @@ export const legal: LegalContent = {
     metaDescription: "Términos que se aplican al uso de este sitio web.",
     title: "Términos de uso",
     lead: "Los términos que se aplican cuando usted usa este sitio web.",
+    updated: "Última actualización: 29 de octubre de 2026",
     outline: [
       "Quién opera el sitio web y cómo contactarle",
       "Finalidad del sitio (información general; no es una solicitud ni una inscripción)",
@@ -70,7 +71,117 @@ export const legal: LegalContent = {
       "Ley y estado aplicables",
       "Cambios en estos términos y fecha de entrada en vigor",
     ],
-    sections: [],
+    // Texto proporcionado el 29 de octubre de 2026. Pendiente de aprobación (site.approvals.terms).
+    sections: [
+      {
+        heading: "1. Información general y responsable del sitio web",
+        paragraphs: [
+          "Este sitio web es operado por **{name}**, agente privado de seguros médicos que ofrece información y orientación sobre opciones de cobertura médica en Estados Unidos.",
+          "Para consultas relacionadas con este sitio web, puede comunicarse mediante los siguientes canales:",
+        ],
+        listStyle: "bullet",
+        list: ["**Nombre:** {name}", "**Teléfono:** {phone}", "**Correo electrónico:** {email}", "**Sitio web:** {website}"],
+        after: [
+          "Al utilizar este sitio web, usted reconoce que ha leído estos Términos de uso. Si no está de acuerdo con ellos, deberá abstenerse de utilizar el sitio.",
+        ],
+      },
+      {
+        heading: "2. Finalidad del sitio web",
+        paragraphs: [
+          "El propósito de este sitio web es proporcionar información general sobre seguros médicos, opciones de cobertura y servicios de orientación relacionados con Medicare, Medicaid y los planes de seguro médico disponibles a través del Mercado de Seguros Médicos (ACA), según corresponda.",
+          "La información publicada tiene fines informativos y comerciales. **La navegación por el sitio, el envío de un mensaje o la solicitud de información no constituyen por sí mismos una solicitud formal de seguro, una inscripción en un plan ni una confirmación de elegibilidad.**",
+          "Cualquier solicitud, inscripción o cambio de cobertura deberá realizarse mediante los procedimientos oficiales correspondientes y estará sujeto a los requisitos, plazos y condiciones aplicables.",
+          "El contenido de este sitio no sustituye los documentos oficiales de los planes, las condiciones de las pólizas ni la información proporcionada por las aseguradoras o los organismos gubernamentales competentes.",
+        ],
+      },
+      {
+        heading: "3. Uso permitido del sitio web",
+        paragraphs: ["El usuario se compromete a utilizar este sitio de manera lícita y responsable. No deberá:"],
+        listStyle: "bullet",
+        list: [
+          "Utilizar el sitio para actividades fraudulentas, ilegales o engañosas.",
+          "Intentar acceder sin autorización a sistemas, cuentas o información restringida.",
+          "Interferir con el funcionamiento, la seguridad o la disponibilidad del sitio.",
+          "Enviar contenido malicioso, información deliberadamente falsa o comunicaciones que vulneren los derechos de terceros.",
+        ],
+        after: [
+          "{name} se reserva el derecho de adoptar medidas razonables para proteger el sitio y a sus usuarios frente a usos indebidos, de conformidad con la legislación aplicable.",
+        ],
+      },
+      {
+        heading: "4. Propiedad intelectual",
+        paragraphs: [
+          "Salvo que se indique lo contrario, los textos, diseños, elementos gráficos, logotipos, fotografías y demás contenidos originales de este sitio web pertenecen a {name} o se utilizan con la autorización correspondiente.",
+          "Queda prohibida la reproducción, distribución, modificación o utilización comercial de estos materiales sin autorización previa del titular de los derechos, excepto cuando la legislación aplicable lo permita.",
+          "Los nombres, marcas, logotipos y materiales de aseguradoras, programas gubernamentales y terceros pertenecen a sus respectivos titulares. Su aparición en este sitio no implica necesariamente una relación de patrocinio, afiliación o respaldo.",
+        ],
+      },
+      {
+        heading: "5. Enlaces a sitios web de terceros",
+        paragraphs: [
+          "Este sitio puede incluir enlaces a páginas externas para facilitar el acceso a información adicional, recursos oficiales o servicios de terceros. Entre ellos pueden encontrarse:",
+        ],
+        listStyle: "bullet",
+        list: [
+          "Medicare: https://www.medicare.gov/",
+          "Mercado de Seguros Médicos: https://www.healthcare.gov/",
+          "Otros sitios de aseguradoras o proveedores de servicios, cuando corresponda.",
+        ],
+        after: [
+          "Estos enlaces se proporcionan como recurso de consulta. {name} no controla necesariamente el contenido, la disponibilidad, las políticas de privacidad ni las prácticas de seguridad de dichos sitios.",
+          "La inclusión de un enlace no implica respaldo, asociación comercial ni garantía sobre los productos o servicios ofrecidos por el tercero. El uso de las páginas externas se rige por sus propios términos y políticas.",
+          "Si este sitio incorpora herramientas externas de agenda, formularios o comunicación, el usuario deberá revisar las condiciones aplicables de esos proveedores antes de utilizarlas.",
+        ],
+      },
+      {
+        heading: "6. Exactitud y disponibilidad de la información",
+        paragraphs: [
+          "Se procura mantener la información de este sitio actualizada y comprensible. Sin embargo, los beneficios, precios, requisitos de elegibilidad, períodos de inscripción y condiciones de los seguros pueden cambiar.",
+          "No se garantiza que todo el contenido esté libre de errores, que se encuentre actualizado en todo momento o que el sitio permanezca disponible sin interrupciones.",
+          "El usuario debe verificar la información relevante con la aseguradora, el organismo oficial o el proveedor correspondiente antes de tomar decisiones relacionadas con su cobertura médica.",
+        ],
+      },
+      {
+        heading: "7. Limitación de responsabilidad",
+        paragraphs: [
+          "En la medida permitida por la legislación aplicable, {name} no garantiza que el uso del sitio sea ininterrumpido, libre de errores o compatible con todos los dispositivos y sistemas.",
+          "El contenido se proporciona con fines informativos generales y no constituye una garantía de cobertura, elegibilidad, aceptación de una solicitud ni disponibilidad de un producto específico.",
+          "En la medida permitida por la ley, {name} no será responsable por pérdidas o daños derivados del uso o la imposibilidad de utilizar el sitio, de la confianza depositada exclusivamente en información general publicada en él o del contenido y funcionamiento de páginas externas.",
+          "**Nada de lo dispuesto en esta sección excluye ni limita responsabilidades que legalmente no puedan excluirse o limitarse**, ni afecta los derechos que correspondan al consumidor conforme a la legislación aplicable.",
+        ],
+      },
+      {
+        heading: "8. Privacidad y protección de datos",
+        paragraphs: [
+          "El tratamiento de los datos personales que el usuario proporcione a través del sitio web se regirá por la Política de privacidad correspondiente.",
+          "Se recomienda consultar dicha política antes de enviar información personal. Los datos relacionados con la salud, la cobertura médica u otras circunstancias sensibles deben proporcionarse únicamente cuando sea necesario y a través de los canales adecuados.",
+          "Si se utilizan formularios, herramientas de agenda u otros servicios de terceros, podrán aplicarse también las políticas de privacidad de sus respectivos proveedores.",
+        ],
+      },
+      {
+        heading: "9. Ley aplicable y jurisdicción",
+        paragraphs: [
+          "Estos Términos de uso se interpretarán de conformidad con las leyes aplicables del Estado de Texas y las leyes federales de los Estados Unidos, según corresponda, sin perjuicio de las normas imperativas que resulten aplicables.",
+          "Cualquier controversia relacionada con el uso de este sitio se resolverá ante los tribunales competentes conforme a la legislación aplicable.",
+          "La determinación definitiva de la jurisdicción competente y cualquier disposición adicional sobre resolución de controversias deberá ser revisada por la asesoría legal del negocio.",
+        ],
+      },
+      {
+        heading: "10. Modificaciones de los términos",
+        paragraphs: [
+          "{name} podrá actualizar estos Términos de uso cuando sea necesario para reflejar cambios en el sitio web, los servicios ofrecidos o los requisitos legales aplicables.",
+          "Las modificaciones se publicarán en esta página junto con la fecha de actualización correspondiente. Se recomienda a los usuarios revisar periódicamente este documento.",
+          "Cuando la legislación aplicable exija notificación o consentimiento específico para determinados cambios, se seguirán los procedimientos correspondientes.",
+        ],
+      },
+      {
+        heading: "11. Contacto",
+        paragraphs: ["Si tiene preguntas sobre estos Términos de uso, puede comunicarse a través de los siguientes medios:"],
+        listStyle: "bullet",
+        list: ["**Responsable:** {name}", "**Teléfono:** {phone}", "**Correo electrónico:** {email}"],
+        after: ["**Fecha de entrada en vigor:** [Fecha de aprobación y publicación definitiva]."],
+      },
+    ],
   },
   disclosures: {
     metaTitle: "Avisos legales",
@@ -78,7 +189,7 @@ export const legal: LegalContent = {
     title: "Avisos legales",
     lead: "Información importante sobre este sitio web.",
     nonAffiliation:
-      "Este sitio web lo opera {brand}, un negocio privado de seguros médicos. No está vinculado con el gobierno de EE. UU., el programa federal Medicare ni ninguna agencia estatal de Medicaid, ni cuenta con su respaldo.",
+      "Este sitio web es operado por {name}, agente de seguros médicos. No está afiliado, conectado ni respaldado por el gobierno de los Estados Unidos, Medicare ni ninguna agencia gubernamental estatal o federal, incluido Medicaid.",
     educational: {
       heading: "Información general",
       paragraphs: [

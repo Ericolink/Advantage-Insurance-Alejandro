@@ -17,6 +17,7 @@ export function navItems(locale: Locale, long = false): NavItem[] {
   const { ui } = getContent(locale);
   const page = (id: PageId) => pathFor({ kind: "page", id }, locale, site);
   return [
+    { href: pathFor({ kind: "home" }, locale, site), label: ui.nav.home },
     { href: page("about"), label: long ? ui.nav.aboutLong : ui.nav.about },
     { href: page("services"), label: ui.nav.services },
     { href: page("newToMedicare"), label: ui.nav.newToMedicare },

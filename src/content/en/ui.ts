@@ -30,6 +30,7 @@ export const ui = {
   },
   nav: {
     label: "Main navigation",
+    home: "Home",
     about: "About",
     aboutLong: "About Alejandro",
     services: "Services",
@@ -213,6 +214,10 @@ export const ui = {
     terms: "Terms",
     disclosures: "Disclosures",
     analytics: "Analytics preferences",
+    independenceLabel: "Independence notice:",
+    coverageLabel: "Coverage information:",
+    marketingTitle: "Insurance product marketing notices",
+    coverageText: "Availability, benefits, costs and eligibility requirements vary by plan and location. Review the official plan documents for their terms and conditions.",
     rights: "© {year} {brand}.",
   },
   analytics: {

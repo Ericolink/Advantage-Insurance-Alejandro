@@ -15,10 +15,15 @@ export interface OfficialLink {
   href: string;
 }
 
+/** Text may use **bold** and {placeholders}. */
 export interface TextSection {
   heading: string;
   paragraphs: string[];
   list?: string[];
+  /** "check" (default) for positive points; "bullet" for neutral lists such as rules or contact details. */
+  listStyle?: "check" | "bullet";
+  /** Paragraphs shown after the list. */
+  after?: string[];
 }
 
 export interface ServiceContent {
@@ -62,10 +67,11 @@ export interface AboutContent {
 export interface LegalContent {
   privacy: { metaTitle: string; metaDescription: string; title: string; lead: string; updated: string; sections: TextSection[] };
   /**
-   * Terms of use. `sections` stays EMPTY until the client or their counsel provides the text — we never write legal terms.
-   * `outline` lists the topics usually covered, shown only in review mode as a checklist for the client.
+   * Terms of use, as provided by the client (we never write legal terms). The page stays hidden on the public site until
+   * site.approvals.terms is confirmed. `outline` is the review-mode checklist shown while `sections` is empty.
+   * Contact list items use {phone}, {email} and {website}; an item whose value is not available is left out.
    */
-  terms: { metaTitle: string; metaDescription: string; title: string; lead: string; outline: string[]; sections: TextSection[] };
+  terms: { metaTitle: string; metaDescription: string; title: string; lead: string; updated: string; outline: string[]; sections: TextSection[] };
   disclosures: {
     metaTitle: string;
     metaDescription: string;

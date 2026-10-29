@@ -55,7 +55,7 @@ describe("content", () => {
   });
 
   it("contains no prices, invented track records or aggressive claims", () => {
-    const forbidden = [/\$\s?\d/, /\b(years|años)\s+(of|de)\s+(experience|experiencia)/i, /(?<!\bnot\s)\bguarantee/i, /(?<!\bno\s)\bgarantiza/i, /\b(best|lowest|cheapest)\s+(price|plan|rate)/i, /\b(mejor|más barato)\s+(precio|plan)/i, /lorem ipsum/i, /\bTODO\b/];
+    const forbidden = [/\$\s?\d/, /\b(years|años)\s+(of|de)\s+(experience|experiencia)/i, /(?<!\bnot\s)\bguarantee/i, /(?<!\bno\s(?:se\s)?)\bgarantiza/i, /\b(best|lowest|cheapest)\s+(price|plan|rate)/i, /\b(mejor|más barato)\s+(precio|plan)/i, /lorem ipsum/i, /\bTODO\b/];
     // Visitors' questions ("Can an agent tell me which plan is best?") are not claims; everything else is checked.
     for (const text of [...strings(en), ...strings(es)].filter((value) => !value.trim().endsWith("?"))) {
       for (const pattern of forbidden) assert.doesNotMatch(text, pattern, `"${text}"`);

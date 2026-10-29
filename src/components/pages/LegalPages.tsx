@@ -4,6 +4,7 @@ import { pathFor } from "@/config/routes";
 import { site } from "@/config/site";
 import type { Locale } from "@/config/types";
 import { visible, visibleServices } from "@/config/visibility";
+import { getContact } from "@/lib/contact";
 import { fill, getContent } from "@/lib/i18n";
 import { TpmoNotice } from "@/components/content/DisclosureBlock";
 import { OfficialLinks } from "@/components/content/OfficialLinks";
@@ -14,13 +15,11 @@ import { Pending } from "@/components/ui/Pending";
 import { Prose } from "./ContentPages";
 
 export function PrivacyPage({ locale }: { locale: Locale }) {
-  const { ui, legal } = getContent(locale);
+  const { legal } = getContent(locale);
   const page = legal.privacy;
   return (
     <>
-      <PageHero locale={locale} title={page.title} lead={page.lead} crumbs={[{ name: page.title, path: pathFor({ kind: "page", id: "privacy" }, locale, site) }]}>
-        {site.approvals.privacyPolicy !== "confirmed" && <Pending marker={ui.pending.marker} label={ui.pending.legalReview} />}
-      </PageHero>
+      <PageHero locale={locale} title={page.title} lead={page.lead} crumbs={[{ name: page.title, path: pathFor({ kind: "page", id: "privacy" }, locale, site) }]} />
       <Container className="py-section">
         <div className="max-w-measure space-y-10">
           {page.sections.map((section) => (
@@ -37,15 +36,25 @@ export function PrivacyPage({ locale }: { locale: Locale }) {
 export function TermsPage({ locale }: { locale: Locale }) {
   const { ui, legal } = getContent(locale);
   const page = legal.terms;
+  const contact = getContact();
+  // Contact details come from site.ts; list items whose value is missing are left out.
+  const vars: Record<string, string> = Object.fromEntries(
+    Object.entries({ phone: contact.phone?.display, email: contact.email, website: site.url }).filter((entry): entry is [string, string] => Boolean(entry[1])),
+  );
+  const missing = ["phone", "email", "website"].filter((key) => !(key in vars));
+  const sections = page.sections.map((section) => ({ ...section, list: section.list?.filter((item) => !missing.some((key) => item.includes(`{${key}}`))) }));
   return (
     <>
-      <PageHero locale={locale} title={page.title} lead={page.lead} crumbs={[{ name: page.title, path: pathFor({ kind: "page", id: "terms" }, locale, site) }]}>
-        {site.approvals.terms !== "confirmed" && <Pending marker={ui.pending.marker} label={ui.pending.legalReview} />}
-      </PageHero>
+      <PageHero locale={locale} title={page.title} lead={page.lead} crumbs={[{ name: page.title, path: pathFor({ kind: "page", id: "terms" }, locale, site) }]} />
       <Container className="py-section">
         <div className="max-w-measure space-y-10">
-          {page.sections.length > 0 ? (
-            page.sections.map((section) => <Prose key={section.heading} section={section} />)
+          {sections.length > 0 ? (
+            <>
+              <p className="text-small text-gray-600">{page.updated}</p>
+              {sections.map((section) => (
+                <Prose key={section.heading} section={section} vars={vars} />
+              ))}
+            </>
           ) : (
             <Pending block marker={ui.pending.marker} label={`${ui.pending.terms}: ${page.outline.join(" · ")}`} />
           )}
@@ -68,25 +77,28 @@ export function DisclosuresPage({ locale }: { locale: Locale }) {
         <div className="max-w-measure space-y-10">
           {services.some((service) => service.medicare) && (
             <section className="space-y-3">
-              {site.approvals.nonAffiliationNotice !== "confirmed" && <Pending marker={marker} label={ui.pending.legalReview} />}
               <Notice kind="info" role="note">
                 <p className="text-body font-semibold">{fill(page.nonAffiliation)}</p>
               </Notice>
             </section>
           )}
 
-          <TpmoNotice locale={locale} />
+          {/* Only once the real TPMO text exists: no "pending" box on this page. */}
+          {visible(site.tpmoDisclaimer) && <TpmoNotice locale={locale} />}
 
-          {visible(site.marketingDisclaimers)?.map((item) => <p key={item.en}>{item[locale]}</p>)}
-          {site.marketingDisclaimers.status === "pending" && <Pending block marker={marker} label={ui.pending.marketing} />}
+          {visible(site.marketingDisclaimers) ? (
+            <section className="space-y-3">
+              <h2 className="text-h3 font-bold">{ui.footer.marketingTitle}</h2>
+              {visible(site.marketingDisclaimers)?.map((item) => <p key={item.en}>{item[locale]}</p>)}
+            </section>
+          ) : (
+            site.marketingDisclaimers.status === "pending" && <Pending block marker={marker} label={ui.pending.marketing} />
+          )}
 
           <Prose section={page.educational} />
 
           {services.some((service) => service.aca) && (
-            <div className="space-y-3">
-              {site.approvals.acaConsentProcess !== "confirmed" && <Pending marker={marker} label={ui.pending.acaConsent} />}
-              <Prose section={page.aca} />
-            </div>
+            <Prose section={page.aca} />
           )}
 
           <OfficialLinks title={page.officialHeading} links={page.officialLinks} newTabLabel={ui.common.opensInNewTab} />

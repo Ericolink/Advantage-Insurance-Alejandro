@@ -6,7 +6,6 @@ import { approvedOrReview, visible, visibleServices } from "@/config/visibility"
 import { getContent, fill } from "@/lib/i18n";
 import { Pending } from "@/components/ui/Pending";
 
-const showsMedicare = () => visibleServices(site).some((service) => service.medicare);
 export const showsTpmoProducts = () => visibleServices(site).some((service) => service.requiresTpmo);
 
 /** TPMO disclaimer box, for pages that market Medicare Advantage or Part D. */
@@ -27,32 +26,37 @@ export function TpmoNotice({ locale, tone = "light" }: { locale: Locale; tone?: 
   );
 }
 
-/** Footer disclosure block: non-affiliation, TPMO and any product marketing disclaimers (rich text from content/config files). */
+/** Footer disclosure block: independence notice, coverage information and any product marketing disclaimers. The TPMO notice lives on the product pages, not here. */
 export function DisclosureBlock({ locale }: { locale: Locale }) {
   const { ui, legal } = getContent(locale);
   const marketing = visible(site.marketingDisclaimers);
-  const showNonAffiliation = showsMedicare() && approvedOrReview(site.approvals.nonAffiliationNotice);
+  const showNonAffiliation = approvedOrReview(site.approvals.nonAffiliationNotice);
 
   return (
     <div className="max-w-measure space-y-4 text-small text-white/85">
       {showNonAffiliation && (
         <p>
-          {site.approvals.nonAffiliationNotice !== "confirmed" && (
-            <>
-              <Pending tone="dark" marker={ui.pending.marker} label={ui.pending.legalReview} />{" "}
-            </>
-          )}
-          {fill(legal.disclosures.nonAffiliation)}
+          <strong className="font-bold text-white">{ui.footer.independenceLabel}</strong> {fill(legal.disclosures.nonAffiliation)}
         </p>
       )}
-      <TpmoNotice locale={locale} tone="dark" />
-      {marketing?.map((item) => (
-        <p key={item.en}>{item[locale]}</p>
-      ))}
-      {site.marketingDisclaimers.status === "pending" && (
-        <p>
-          <Pending tone="dark" marker={ui.pending.marker} label={ui.pending.marketing} />
-        </p>
+      <p>
+        <strong className="font-bold text-white">{ui.footer.coverageLabel}</strong> {ui.footer.coverageText}
+      </p>
+      {marketing ? (
+        <div className="space-y-2">
+          <p>
+            <strong className="font-bold text-white">{ui.footer.marketingTitle}</strong>
+          </p>
+          {marketing.map((item) => (
+            <p key={item.en}>{item[locale]}</p>
+          ))}
+        </div>
+      ) : (
+        site.marketingDisclaimers.status === "pending" && (
+          <p>
+            <Pending tone="dark" marker={ui.pending.marker} label={ui.pending.marketing} />
+          </p>
+        )
       )}
     </div>
   );

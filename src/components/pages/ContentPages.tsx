@@ -23,24 +23,41 @@ function ReviewMarker({ locale, approved }: { locale: Locale; approved: boolean 
   return <Pending marker={ui.pending.marker} label={ui.pending.contentReview} />;
 }
 
-export function Prose({ section, level = 2 }: { section: TextSection; level?: 2 | 3 }) {
+/** Fills placeholders and turns **text** into bold. */
+function rich(text: string, vars?: Record<string, string>) {
+  return fill(text, vars)
+    .split(/\*\*(.+?)\*\*/g)
+    .map((part, index) => (index % 2 === 1 ? <strong key={index} className="font-bold text-gray-700">{part}</strong> : part));
+}
+
+export function Prose({ section, level = 2, vars }: { section: TextSection; level?: 2 | 3; vars?: Record<string, string> }) {
   const Heading = level === 2 ? "h2" : "h3";
   return (
     <section className="space-y-4">
       <Heading className={`${level === 2 ? "text-h2" : "text-h3"} font-bold`}>{fill(section.heading)}</Heading>
       {section.paragraphs.map((paragraph) => (
-        <p key={paragraph}>{fill(paragraph)}</p>
+        <p key={paragraph}>{rich(paragraph, vars)}</p>
       ))}
-      {section.list && (
-        <ul className="space-y-2">
-          {section.list.map((item) => (
-            <li key={item} className="flex gap-3">
-              <Icon name="check" className="mt-1 size-5 shrink-0 text-green-700" />
-              <span>{fill(item)}</span>
-            </li>
-          ))}
-        </ul>
-      )}
+      {section.list &&
+        (section.listStyle === "bullet" ? (
+          <ul className="list-disc space-y-2 pl-6 marker:text-red-600">
+            {section.list.map((item) => (
+              <li key={item}>{rich(item, vars)}</li>
+            ))}
+          </ul>
+        ) : (
+          <ul className="space-y-2">
+            {section.list.map((item) => (
+              <li key={item} className="flex gap-3">
+                <Icon name="check" className="mt-1 size-5 shrink-0 text-green-700" />
+                <span>{rich(item, vars)}</span>
+              </li>
+            ))}
+          </ul>
+        ))}
+      {section.after?.map((paragraph) => (
+        <p key={paragraph}>{rich(paragraph, vars)}</p>
+      ))}
     </section>
   );
 }
