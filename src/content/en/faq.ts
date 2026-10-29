@@ -13,7 +13,7 @@ export const faq: QA[] = [
   },
   {
     q: "Can I get information in Spanish?",
-    a: "This website is available in English and Spanish. When you send a request, you can choose your preferred language. The languages of service are listed on the About page.",
+    a: "This website is available in English and Spanish. A request sent from the Spanish pages is marked as Spanish. The languages of service are listed on the About page.",
   },
   {
     q: "What is the difference between Original Medicare and Medicare Advantage?",
@@ -21,7 +21,7 @@ export const faq: QA[] = [
   },
   {
     q: "How can I request an appointment?",
-    a: "Send a request with your preferred contact method and the best time to reach you, or call. If a scheduling link is available on the contact page, you can also pick a time directly.",
+    a: "Send a short request with the best time to call you, or call directly. If a scheduling link is available on the contact page, you can also pick a time directly.",
   },
   {
     q: "What happens after I send a request?",

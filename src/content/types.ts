@@ -55,11 +55,18 @@ export interface GuideContent {
 export interface AboutContent {
   /** Biography paragraphs provided by Alejandro. Empty until received. */
   biography: string[];
+  /** "How Alejandro works", in Alejandro's own words. Empty until received; approved together with the biography. */
+  approach: string[];
 }
 
 export interface LegalContent {
   privacy: { metaTitle: string; metaDescription: string; title: string; lead: string; updated: string; sections: TextSection[] };
-  disclaimers: {
+  /**
+   * Terms of use. `sections` stays EMPTY until the client or their counsel provides the text — we never write legal terms.
+   * `outline` lists the topics usually covered, shown only in review mode as a checklist for the client.
+   */
+  terms: { metaTitle: string; metaDescription: string; title: string; lead: string; outline: string[]; sections: TextSection[] };
+  disclosures: {
     metaTitle: string;
     metaDescription: string;
     title: string;

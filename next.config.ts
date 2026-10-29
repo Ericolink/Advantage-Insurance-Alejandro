@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import { getPendingItems } from "./src/config/readiness.ts";
+import { legacyPaths } from "./src/config/routes.ts";
 import { site } from "./src/config/site.ts";
 
 // With REQUIRE_LAUNCH_READY=1 the build refuses to run while blocking launch items remain.
@@ -17,6 +18,10 @@ if (isBuild && process.env.REQUIRE_LAUNCH_READY === "1") {
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   images: { formats: ["image/avif", "image/webp"] },
+  // URLs renamed by the design handoff keep working.
+  async redirects() {
+    return legacyPaths.map(({ from, to }) => ({ source: from, destination: to, permanent: true }));
+  },
   async headers() {
     return [
       {

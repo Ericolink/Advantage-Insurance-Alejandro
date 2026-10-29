@@ -1,28 +1,24 @@
 import { reviewMode } from "@/config/visibility";
-import { Icon } from "./Icon";
+import { Notice } from "./Notice";
 
 /**
- * Visible marker for missing or unapproved data. Renders ONLY in review mode, so it can never
- * reach the public site. Search the code for <Pending to find every placeholder.
+ * Marker for missing or unapproved data: [BRACKETED] text, or a red dashed box when `block`.
+ * Renders ONLY in review mode, so it can never reach the public site. Search the code for
+ * <Pending (or the data-pending attribute in the HTML) to find every placeholder.
  */
-export function Pending({ label, marker, block = false }: { label: string; marker: string; block?: boolean }) {
+export function Pending({ label, marker, block = false, tone = "light" }: { label: string; marker: string; block?: boolean; tone?: "light" | "dark" }) {
   if (!reviewMode) return null;
   if (block) {
     return (
-      <div className="flex items-start gap-3 rounded-control border-2 border-dashed border-pending-line bg-pending-soft p-4 text-base font-semibold text-pending" data-pending>
-        <Icon name="alert" className="mt-0.5 size-5 shrink-0" />
-        <p>
-          <span className="uppercase tracking-wide">{marker}:</span> {label}
-        </p>
-      </div>
+      <Notice kind="pending" title={`${marker}.`}>
+        <p>{label}</p>
+      </Notice>
     );
   }
+  const color = tone === "dark" ? "border-white/70 text-white" : "border-red-600 text-red-700";
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-dashed border-pending-line bg-pending-soft px-3 py-0.5 text-sm font-semibold text-pending" data-pending>
-      <Icon name="alert" className="size-4 shrink-0" />
-      <span>
-        {marker}: {label}
-      </span>
+    <span className={`inline-block rounded-sm border border-dashed px-1.5 font-semibold ${color}`} data-pending>
+      <span className="sr-only">{marker}: </span>[{label}]
     </span>
   );
 }

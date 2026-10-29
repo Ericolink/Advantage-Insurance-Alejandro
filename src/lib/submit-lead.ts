@@ -3,13 +3,11 @@
 import { headers } from "next/headers";
 import { hasLeadDestination } from "@/config/lead-env";
 import { hasLocale } from "@/config/routes";
-import { site } from "@/config/site";
 import type { Locale } from "@/config/types";
 import { getContent, fill } from "@/lib/i18n";
 import { leadTopics, topicLabel } from "@/lib/lead-topics";
 import { readLeadForm, validateLead, type LeadFormState } from "@/lib/lead-validation";
 import { deliverLead, isRateLimited } from "@/lib/leads";
-import { visible } from "@/config/visibility";
 
 export async function submitLead(_previous: LeadFormState, data: FormData): Promise<LeadFormState> {
   const rawLocale = String(data.get("locale") ?? "");
@@ -19,7 +17,7 @@ export async function submitLead(_previous: LeadFormState, data: FormData): Prom
   // Bots fill the hidden field: answer as if it worked, deliver nothing.
   if (input.trap) return { status: "success", visitor: "" };
 
-  const { errors, lead } = validateLead(input, { topics: leadTopics(), allowWhatsapp: visible(site.whatsapp) !== null });
+  const { errors, lead } = validateLead(input, { topics: leadTopics() });
   if (!lead) return { status: "invalid", errors };
 
   // Never pretend the request was sent.

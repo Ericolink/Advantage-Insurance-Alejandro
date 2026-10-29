@@ -4,4 +4,5 @@ import type { AboutContent } from "../types";
 
 export const about: AboutContent = {
   biography: [],
+  approach: [],
 };

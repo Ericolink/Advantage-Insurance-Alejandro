@@ -15,18 +15,19 @@ interface Props {
   ui: UiContent;
   location: string;
   variant?: ButtonVariant;
+  size?: "lg" | "md";
   className?: string;
   /** Show the number in the label ("Call (555) 123-4567") instead of just "Call". */
   withNumber?: boolean;
 }
 
-export function CallButton({ ui, location, variant = "outline", className = "", withNumber = true }: Props) {
+export function CallButton({ ui, location, variant = "secondary", size = "lg", className = "", withNumber = true }: Props) {
   const { phone } = getContact();
   if (!phone) return <Pending marker={ui.pending.marker} label={ui.pending.phone} />;
   return (
     <a
       href={telHref(phone.e164)}
-      className={buttonClass(variant, className)}
+      className={buttonClass(variant, className, size)}
       aria-label={fill(ui.cta.callAria, { phone: phone.display })}
       data-event="call_click"
       data-location={location}
@@ -37,7 +38,7 @@ export function CallButton({ ui, location, variant = "outline", className = "", 
   );
 }
 
-export function WhatsAppButton({ ui, location, variant = "outline", className = "" }: Props) {
+export function WhatsAppButton({ ui, location, variant = "secondary", size = "lg", className = "" }: Props) {
   const { whatsapp } = getContact();
   // WhatsApp is optional: when it is not configured there is simply no button (the launch check tracks the decision).
   if (!whatsapp) return null;
@@ -46,7 +47,7 @@ export function WhatsAppButton({ ui, location, variant = "outline", className = 
       href={whatsappHref(whatsapp.e164, ui.cta.whatsappMessage)}
       target="_blank"
       rel="noopener noreferrer"
-      className={buttonClass(variant, className)}
+      className={buttonClass(variant, className, size)}
       aria-label={`${fill(ui.cta.whatsappAria)} ${ui.common.opensInNewTab}`}
       data-event="whatsapp_click"
       data-location={location}
@@ -57,23 +58,25 @@ export function WhatsAppButton({ ui, location, variant = "outline", className = 
   );
 }
 
-export function EmailButton({ ui, location, variant = "outline", className = "" }: Props) {
+export function EmailButton({ ui, location, variant = "secondary", size = "lg", className = "" }: Props) {
   const { email } = getContact();
   if (!email) return <Pending marker={ui.pending.marker} label={ui.pending.email} />;
   return (
-    <a href={`mailto:${email}`} className={buttonClass(variant, className)} data-event="email_click" data-location={location}>
+    <a href={`mailto:${email}`} className={buttonClass(variant, className, size)} data-event="email_click" data-location={location}>
       <Icon name="mail" className="size-5" />
       {ui.cta.email}
     </a>
   );
 }
 
-/** Main conversion: goes to the contact form. */
-export function RequestButton({ ui, locale, location, variant = "primary", className = "" }: Props & { locale: Locale }) {
+/** Where "Schedule a Consultation" leads: the booking block when a scheduling link exists, otherwise the request form. */
+export const scheduleHref = (locale: Locale) => `${pathFor({ kind: "page", id: "contact" }, locale, site)}#${getContact().scheduling ? "schedule" : "request"}`;
+
+/** Main conversion (the one red button of a screen area). */
+export function ScheduleButton({ ui, locale, location, variant = "primary", size = "lg", className = "" }: Props & { locale: Locale }) {
   return (
-    <Link href={`${pathFor({ kind: "page", id: "contact" }, locale, site)}#request`} className={buttonClass(variant, className)} data-location={location}>
-      {ui.cta.requestConversation}
-      <Icon name="arrow-right" className="size-5" />
+    <Link href={scheduleHref(locale)} className={buttonClass(variant, className, size)} data-location={location}>
+      {ui.cta.schedule}
     </Link>
   );
 }

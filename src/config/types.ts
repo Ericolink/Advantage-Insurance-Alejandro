@@ -29,12 +29,14 @@ export type IconName =
   | "globe"
   | "heart"
   | "home"
+  | "image"
   | "info"
   | "layers"
   | "mail"
   | "map-pin"
   | "menu"
   | "message"
+  | "pencil"
   | "phone"
   | "pill"
   | "plus"
@@ -97,6 +99,8 @@ export interface SiteConfig {
   /** Languages Alejandro offers appointments in (not the languages of the website). */
   languages: Fact<Locale[]>;
   hours: Fact<Localized>;
+  /** Reply time Alejandro can promise after a form request, e.g. "one business day". Shown in the success message. */
+  responseTime: Fact<Localized>;
   licenses: Fact<License[]>;
   npn: Fact<string>;
   photo: Fact<Photo>;
@@ -110,6 +114,8 @@ export interface SiteConfig {
     educationalContent: Status;
     faq: Status;
     privacyPolicy: Status;
+    /** Terms of use (src/content/<lang>/legal.ts → terms), provided by the client or their counsel. */
+    terms: Status;
     nonAffiliationNotice: Status;
     contactConsent: Status;
     /** Business-approved consent/documentation process for ACA Marketplace leads. */

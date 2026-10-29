@@ -21,7 +21,7 @@ export function Scheduler({ url, provider, allowEmbed, labels }: Props) {
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-        <a href={url} target="_blank" rel="noopener noreferrer" className={buttonClass("accent")} data-event="schedule_click" data-location="contact_page">
+        <a href={url} target="_blank" rel="noopener noreferrer" className={buttonClass("primary")} data-event="schedule_click" data-location="contact_page">
           <Icon name="calendar" className="size-5" />
           {labels.open}
           <span className="sr-only"> {labels.newTab}</span>
@@ -29,7 +29,7 @@ export function Scheduler({ url, provider, allowEmbed, labels }: Props) {
         {allowEmbed && !embedded && (
           <button
             type="button"
-            className={buttonClass("outline")}
+            className={buttonClass("secondary")}
             onClick={() => {
               setEmbedded(true);
               track("schedule_open", { location: "contact_page" });
@@ -39,8 +39,8 @@ export function Scheduler({ url, provider, allowEmbed, labels }: Props) {
           </button>
         )}
       </div>
-      {allowEmbed && !embedded && <p className="text-base text-muted">{labels.loadNote.replace("{provider}", provider)}</p>}
-      {embedded && <iframe src={url} title={labels.frameTitle} className="h-[44rem] w-full rounded-card border-2 border-line bg-surface" loading="lazy" />}
+      {allowEmbed && !embedded && <p className="text-small text-gray-600">{labels.loadNote.replace("{provider}", provider)}</p>}
+      {embedded && <iframe src={url} title={labels.frameTitle} className="h-[44rem] w-full rounded-lg border border-gray-200 bg-white" loading="lazy" />}
     </div>
   );
 }

@@ -18,10 +18,11 @@ export const legal: LegalContent = {
         heading: "Información que usted nos envía",
         paragraphs: ["Cuando usa el formulario de contacto, solo recogemos:"],
         list: [
-          "Su nombre.",
-          "Su medio de contacto preferido y su número de teléfono o correo electrónico.",
-          "Su idioma preferido, el tema general y el mejor horario para contactarle.",
-          "Su aceptación de ser contactado/a y la fecha y hora de la solicitud.",
+          "Su nombre y número de teléfono.",
+          "Su correo electrónico, si decide indicarlo.",
+          "El mejor horario para llamarle y el tema general de su consulta.",
+          "Un mensaje breve, si decide escribirlo.",
+          "Su aceptación de ser contactado/a, el idioma de la página y la fecha y hora de la solicitud.",
         ],
       },
       {
@@ -55,7 +56,23 @@ export const legal: LegalContent = {
       },
     ],
   },
-  disclaimers: {
+  terms: {
+    metaTitle: "Términos de uso",
+    metaDescription: "Términos que se aplican al uso de este sitio web.",
+    title: "Términos de uso",
+    lead: "Los términos que se aplican cuando usted usa este sitio web.",
+    outline: [
+      "Quién opera el sitio web y cómo contactarle",
+      "Finalidad del sitio (información general; no es una solicitud ni una inscripción)",
+      "Uso del contenido y propiedad intelectual",
+      "Enlaces a sitios de terceros (Medicare.gov, proveedor de agenda…)",
+      "Limitación de responsabilidad",
+      "Ley y estado aplicables",
+      "Cambios en estos términos y fecha de entrada en vigor",
+    ],
+    sections: [],
+  },
+  disclosures: {
     metaTitle: "Avisos legales",
     metaDescription: "Avisos importantes sobre este sitio web y la información que contiene.",
     title: "Avisos legales",

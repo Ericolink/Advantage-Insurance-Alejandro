@@ -12,14 +12,17 @@ interface PageMeta {
   description: string;
   /** Use the title as-is instead of the "%s | Brand" template (home page). */
   absoluteTitle?: boolean;
+  /** Keep this page out of search results (unapproved drafts, pending services). */
+  noindex?: boolean;
 }
 
 /** Title, description, canonical, hreflang (with x-default) and Open Graph for one page. */
-export function pageMetadata({ locale, route, title, description, absoluteTitle }: PageMeta): Metadata {
+export function pageMetadata({ locale, route, title, description, absoluteTitle, noindex }: PageMeta): Metadata {
   const paths = alternatePaths(route, site);
   return {
     title: absoluteTitle ? { absolute: title } : title,
     description,
+    ...(noindex && { robots: { index: false, follow: true } }),
     alternates: {
       canonical: paths[locale],
       languages: { [localeTags.en]: paths.en, [localeTags.es]: paths.es, "x-default": paths.en },

@@ -23,6 +23,34 @@ export function visibleServices(site: SiteConfig, review = reviewMode): ServiceC
   return site.services.filter((service) => service.status === "confirmed" || (review && service.status === "pending"));
 }
 
+/** Terms of use exist only once provided and approved (or as an outline in review mode). */
+export const termsVisible = (site: SiteConfig, review = reviewMode) => approvedOrReview(site.approvals.terms, review);
+
+/**
+ * Approval that governs a page's text. Pages whose text is not approved get `noindex`
+ * even on an indexable build, so drafts never reach search results.
+ */
+export function pageApproval(site: SiteConfig, page: "home" | "about" | "services" | "service" | "newToMedicare" | "faq" | "contact" | "privacy" | "terms" | "disclosures"): Status {
+  switch (page) {
+    case "about":
+      return site.approvals.biography;
+    case "services":
+    case "service":
+    case "newToMedicare":
+      return site.approvals.educationalContent;
+    case "faq":
+      return site.approvals.faq;
+    case "privacy":
+      return site.approvals.privacyPolicy;
+    case "terms":
+      return site.approvals.terms;
+    case "disclosures":
+      return site.approvals.nonAffiliationNotice;
+    default:
+      return "confirmed";
+  }
+}
+
 /** Name shown as the site/brand name: the commercial name once confirmed, otherwise the agent's name. */
 export function brandName(site: SiteConfig): string {
   return confirmed(site.businessName) ?? site.agentName.value ?? "";

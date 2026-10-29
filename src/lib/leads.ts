@@ -17,18 +17,17 @@ export interface Lead extends ValidLead {
 const escapeHtml = (value: string) =>
   value.replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]!);
 
-const methodLabels = { phone: "Llamada / Phone call", whatsapp: "WhatsApp", email: "Correo / Email" } as const;
-const timeLabels = { morning: "Mañana / Morning", afternoon: "Tarde / Afternoon", evening: "Noche / Evening", any: "Cualquiera / Any time" } as const;
+const timeLabels = { any: "Cualquiera / Any time", morning: "Mañana / Morning", afternoon: "Tarde / Afternoon", evening: "Noche / Evening" } as const;
 
 function emailRows(lead: Lead): [string, string][] {
   const rows: [string, string | null][] = [
     ["Nombre / Name", lead.name],
-    ["Contactar por / Contact by", methodLabels[lead.method]],
     ["Teléfono / Phone", lead.phone],
     ["Correo / Email", lead.email],
-    ["Idioma / Language", lead.language === "es" ? "Español / Spanish" : "Inglés / English"],
+    ["Idioma de la página / Page language", lead.pageLocale === "es" ? "Español / Spanish" : "Inglés / English"],
     ["Tema / Topic", lead.topicLabel],
     ["Horario / Best time", timeLabels[lead.time]],
+    ["Mensaje / Message", lead.message],
     ["Consentimiento / Consent", `Sí / Yes — “${lead.consentText}”`],
     ["Enviado / Sent", lead.submittedAt],
   ];

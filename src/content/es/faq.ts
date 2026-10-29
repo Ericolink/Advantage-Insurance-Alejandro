@@ -13,7 +13,7 @@ export const faq: QA[] = [
   },
   {
     q: "¿Puedo recibir orientación en español?",
-    a: "Este sitio web está disponible en inglés y en español. Al enviar una solicitud, puede elegir su idioma preferido. Los idiomas de atención se indican en la página Sobre Alejandro.",
+    a: "Este sitio web está disponible en inglés y en español. Las solicitudes enviadas desde las páginas en español se marcan como en español. Los idiomas de atención se indican en la página Sobre Alejandro.",
   },
   {
     q: "¿Qué diferencia hay entre Medicare Original y Medicare Advantage?",
@@ -21,7 +21,7 @@ export const faq: QA[] = [
   },
   {
     q: "¿Cómo puedo solicitar una cita?",
-    a: "Envíe una solicitud con su medio de contacto preferido y el mejor horario para contactarle, o llame. Si en la página de contacto hay un enlace de agenda, también puede elegir un horario directamente.",
+    a: "Envíe una breve solicitud con el mejor horario para llamarle, o llame directamente. Si en la página de contacto hay un enlace de agenda, también puede elegir un horario directamente.",
   },
   {
     q: "¿Qué sucede después de enviar una solicitud de contacto?",

@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { hasLocale } from "@/config/routes";
 import { fill, getContent } from "@/lib/i18n";
 import { pageMetadata } from "@/lib/seo";
-import { AgentIntro, Benefits, FaqTeaser, FinalCta, Hero, HowItWorks, ServicesOverview } from "@/components/sections/HomeSections";
+import { CTABand } from "@/components/sections/CTABand";
+import { AgentIntro, FaqTeaser, Hero, HowItWorks, Intro, ServicesOverview } from "@/components/sections/HomeSections";
 import { AgentJsonLd } from "@/components/seo/JsonLd";
-import { notFound } from "next/navigation";
 
 type Props = { params: Promise<{ lang: string }> };
 
@@ -22,12 +23,12 @@ export default async function HomePage({ params }: Props) {
     <>
       <AgentJsonLd locale={lang} />
       <Hero locale={lang} />
+      <Intro locale={lang} />
       <ServicesOverview locale={lang} />
       <HowItWorks locale={lang} />
-      <Benefits locale={lang} />
       <AgentIntro locale={lang} />
       <FaqTeaser locale={lang} />
-      <FinalCta locale={lang} />
+      <CTABand locale={lang} />
     </>
   );
 }

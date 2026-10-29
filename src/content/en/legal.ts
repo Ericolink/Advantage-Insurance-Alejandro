@@ -18,10 +18,11 @@ export const legal: LegalContent = {
         heading: "Information you send us",
         paragraphs: ["When you use the contact form, we collect only:"],
         list: [
-          "Your name.",
-          "Your preferred contact method and your phone number or email address.",
-          "Your preferred language, general topic and best time to be contacted.",
-          "Your agreement to be contacted and the date and time of the request.",
+          "Your name and phone number.",
+          "Your email address, if you choose to give it.",
+          "The best time to call you and the general topic of your question.",
+          "A short message, if you choose to write one.",
+          "Your agreement to be contacted, the page language and the date and time of the request.",
         ],
       },
       {
@@ -55,10 +56,26 @@ export const legal: LegalContent = {
       },
     ],
   },
-  disclaimers: {
-    metaTitle: "Disclaimers",
+  terms: {
+    metaTitle: "Terms of use",
+    metaDescription: "Terms that apply to the use of this website.",
+    title: "Terms of use",
+    lead: "The terms that apply when you use this website.",
+    outline: [
+      "Who operates the website and how to contact them",
+      "Purpose of the website (general information; not an application or enrollment)",
+      "Use of the content and intellectual property",
+      "Links to third-party websites (Medicare.gov, scheduling provider…)",
+      "Limitation of liability",
+      "Governing law and state",
+      "Changes to these terms and effective date",
+    ],
+    sections: [],
+  },
+  disclosures: {
+    metaTitle: "Disclosures",
     metaDescription: "Important notices about this website and the information it contains.",
-    title: "Disclaimers",
+    title: "Disclosures",
     lead: "Important information about this website.",
     nonAffiliation:
       "This website is operated by {brand}, a private health insurance agent. It is not connected with or endorsed by the U.S. government, the federal Medicare program or any state Medicaid agency.",

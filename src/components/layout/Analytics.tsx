@@ -2,6 +2,7 @@
 
 import { useEffect, useSyncExternalStore } from "react";
 import { GA_ID, track, type AnalyticsEvent } from "@/lib/analytics";
+import { buttonClass } from "@/components/ui/Button";
 
 // Analytics consent is a per-browser convenience, stored in localStorage. Never stores personal data.
 const STORAGE_KEY = "analytics-consent";
@@ -67,13 +68,13 @@ export function AnalyticsConsent({ title, text, accept, decline }: { title: stri
 
   if (!GA_ID || choice !== null) return null;
   return (
-    <div role="region" aria-label={title} className="fixed inset-x-3 bottom-24 z-40 mx-auto max-w-xl rounded-card border-2 border-line bg-surface p-5 shadow-xl lg:bottom-6">
-      <p className="text-base text-ink">{text}</p>
+    <div role="region" aria-label={title} className="fixed inset-x-3 bottom-3 z-40 mx-auto max-w-xl rounded-lg border border-gray-200 bg-white p-5 shadow-md">
+      <p className="text-small text-gray-700">{text}</p>
       <div className="mt-4 flex flex-wrap gap-3">
-        <button type="button" onClick={() => saveChoice("granted")} className="min-h-12 rounded-control bg-brand px-5 text-base font-bold text-white hover:bg-brand-strong">
+        <button type="button" onClick={() => saveChoice("granted")} className={buttonClass("secondary", "", "md")}>
           {accept}
         </button>
-        <button type="button" onClick={() => saveChoice("denied")} className="min-h-12 rounded-control border-2 border-brand px-5 text-base font-bold text-brand hover:bg-brand-soft">
+        <button type="button" onClick={() => saveChoice("denied")} className={buttonClass("secondary", "", "md")}>
           {decline}
         </button>
       </div>
@@ -82,11 +83,11 @@ export function AnalyticsConsent({ title, text, accept, decline }: { title: stri
 }
 
 /** Footer button that reopens the analytics notice. Withdrawing consent reloads the page so GA is unloaded. */
-export function AnalyticsPreferencesButton({ label }: { label: string }) {
+export function AnalyticsPreferencesButton({ label, className = "" }: { label: string; className?: string }) {
   return (
     <button
       type="button"
-      className="text-left underline-offset-4 hover:underline"
+      className={`text-left ${className}`}
       onClick={() => {
         const wasGranted = readChoice() === "granted";
         saveChoice(null);

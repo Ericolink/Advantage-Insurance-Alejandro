@@ -11,14 +11,24 @@ export const pageSlugs = {
   about: { en: "about", es: "sobre-alejandro" },
   services: { en: "services", es: "servicios" },
   newToMedicare: { en: "new-to-medicare", es: "nuevo-en-medicare" },
-  faq: { en: "faq", es: "preguntas-frecuentes" },
+  faq: { en: "faq", es: "preguntas" },
   contact: { en: "contact", es: "contacto" },
   privacy: { en: "privacy", es: "privacidad" },
-  disclaimers: { en: "disclaimers", es: "avisos" },
+  terms: { en: "terms", es: "terminos" },
+  disclosures: { en: "disclosures", es: "avisos" },
 } as const satisfies Record<string, Record<Locale, string>>;
 
 export type PageId = keyof typeof pageSlugs;
 export const pageIds = Object.keys(pageSlugs) as PageId[];
+
+/** Footer legal links, in display order. */
+export const legalPageIds = ["privacy", "terms", "disclosures"] as const satisfies readonly PageId[];
+
+/** URLs used before the design handoff; next.config.ts redirects them permanently. */
+export const legacyPaths = [
+  { from: "/es/preguntas-frecuentes", to: "/es/preguntas" },
+  { from: "/en/disclaimers", to: "/en/disclosures" },
+];
 
 export type Route = { kind: "home" } | { kind: "page"; id: PageId } | { kind: "service"; id: ServiceId };
 

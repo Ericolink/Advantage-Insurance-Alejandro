@@ -4,32 +4,40 @@ import { startTransition, useActionState, useEffect, useId, useLayoutEffect, use
 import type { Locale } from "@/config/types";
 import type { UiContent } from "@/content/types";
 import { track } from "@/lib/analytics";
-import { fieldOrder, readLeadForm, timeSlots, validateLead, type ContactMethod, type LeadErrors, type LeadField, type LeadFormState } from "@/lib/lead-validation";
+import { fieldOrder, MESSAGE_MAX, readLeadForm, timeSlots, validateLead, type LeadErrors, type LeadField, type LeadFormState } from "@/lib/lead-validation";
 import { submitLead } from "@/lib/submit-lead";
-import { buttonClass } from "@/components/ui/Button";
+import { buttonClass, linkClass } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
+import { Notice } from "@/components/ui/Notice";
 
 export interface ContactFormProps {
   locale: Locale;
   text: UiContent["form"];
   /** Consent wording with the agent's name filled in. */
   consentText: string;
-  /** Success text with the agent's name filled in ({visitor} is filled here). */
-  successTitle: string;
-  successText: string;
+  /** "What happens next" line, name filled in. */
+  successNext: string;
+  /** Promised reply time, only when confirmed in site.ts. */
+  successResponse: string | null;
   failedText: string;
   topics: { id: string; label: string }[];
-  allowWhatsapp: boolean;
   privacyHref: string;
   /** Review-mode notices shown above the fields (e.g. "consent wording pending"). */
   notices?: ReactNode;
 }
 
 const inputClass =
-  "mt-2 block w-full rounded-control border-2 border-muted/60 bg-surface px-4 py-3 text-lg text-ink placeholder:text-muted/70 focus:border-brand aria-[invalid=true]:border-danger";
-const labelClass = "block text-lg font-bold text-ink";
-const choiceClass =
-  "flex min-h-12 cursor-pointer items-center gap-3 rounded-control border-2 border-line bg-surface px-4 py-2 text-lg has-[:checked]:border-brand has-[:checked]:bg-brand-soft";
+  "mt-2 block min-h-tap w-full rounded-md border-2 border-gray-500 bg-white px-4 py-3 text-body text-gray-700 focus-visible:border-navy-900 focus-visible:ring-4 focus-visible:ring-navy-900/25 focus-visible:outline-none aria-[invalid=true]:border-red-700";
+const labelClass = "block font-bold text-navy-900";
+
+// A network failure (offline, timeout) is reported like a delivery failure: honest, with the phone as fallback.
+async function submitSafely(previous: LeadFormState, data: FormData): Promise<LeadFormState> {
+  try {
+    return await submitLead(previous, data);
+  } catch {
+    return { status: "failed" };
+  }
+}
 
 /** Wrapper so "send another request" starts a fresh form (new action state). */
 export function ContactForm(props: ContactFormProps) {
@@ -37,17 +45,21 @@ export function ContactForm(props: ContactFormProps) {
   return <ContactFormInner key={round} {...props} onReset={() => setRound((value) => value + 1)} />;
 }
 
-function ContactFormInner({ locale, text, consentText, successTitle, successText, failedText, topics, allowWhatsapp, privacyHref, notices, onReset }: ContactFormProps & { onReset: () => void }) {
-  const [state, formAction, pending] = useActionState<LeadFormState, FormData>(submitLead, { status: "idle" });
-  const [clientErrors, setClientErrors] = useState<LeadErrors | null>(null);
-  const [method, setMethod] = useState<ContactMethod>("phone");
+function ContactFormInner({ locale, text, consentText, successNext, successResponse, failedText, topics, privacyHref, notices, onReset }: ContactFormProps & { onReset: () => void }) {
+  const [state, formAction, pending] = useActionState<LeadFormState, FormData>(submitSafely, { status: "idle" });
+  // Errors shown next to fields: set on leaving a field, on submit, or by the server.
+  const [errors, setErrors] = useState<LeadErrors>({});
+  // Bumped on each failed submit so focus moves to the summary even when the same errors repeat.
+  const [attempt, setAttempt] = useState(0);
+  const formRef = useRef<HTMLFormElement>(null);
   const summaryRef = useRef<HTMLDivElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
   const id = useId();
   const fieldId = (field: LeadField) => `${id}-${field}`;
+  const rules = { topics: topics.map((topic) => topic.id) };
 
-  const errors: LeadErrors = clientErrors ?? (state.status === "invalid" ? state.errors : {});
-  const errorFields = fieldOrder.filter((field) => errors[field]);
+  const shown: LeadErrors = state.status === "invalid" && attempt === 0 ? state.errors : errors;
+  const errorFields = fieldOrder.filter((field) => shown[field]);
 
   // React to the server's answer: analytics (event name only) and move focus to the message.
   useEffect(() => {
@@ -61,74 +73,83 @@ function ContactFormInner({ locale, text, consentText, successTitle, successText
     }
   }, [state]);
 
-  // Browser-side errors: move focus to the summary once it is rendered.
   useLayoutEffect(() => {
-    if (clientErrors) summaryRef.current?.focus();
-  }, [clientErrors]);
+    if (attempt > 0) summaryRef.current?.focus();
+  }, [attempt]);
+
+  const currentErrors = () => (formRef.current ? validateLead(readLeadForm(new FormData(formRef.current)), rules).errors : {});
+
+  /** Leaving a field shows (or clears) that field's error only. */
+  function checkField(field: LeadField) {
+    const found = currentErrors();
+    setErrors((previous) => ({ ...previous, [field]: found[field] }));
+  }
+
+  /** While typing, an error that is already shown clears as soon as the value becomes valid. */
+  function recheckIfShown(field: LeadField) {
+    if (errors[field]) checkField(field);
+  }
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (pending) return;
     const data = new FormData(event.currentTarget);
-    const { errors: found } = validateLead(readLeadForm(data), { topics: topics.map((topic) => topic.id), allowWhatsapp });
+    const { errors: found } = validateLead(readLeadForm(data), rules);
+    setErrors(found);
     if (Object.keys(found).length > 0) {
-      // A new object each time, so the focus effect runs even when the same errors repeat.
-      setClientErrors({ ...found });
+      setAttempt((value) => value + 1);
       return;
     }
-    setClientErrors(null);
+    setAttempt(0);
     startTransition(() => formAction(data));
   }
 
   if (state.status === "success") {
     return (
-      <div ref={resultRef} tabIndex={-1} role="status" className="rounded-card border-2 border-success bg-success-soft p-6 sm:p-8">
-        <p className="flex items-start gap-3 text-2xl font-bold text-success">
-          <span className="grid size-10 shrink-0 place-items-center rounded-full bg-success text-white">
-            <Icon name="check" className="size-6" />
-          </span>
-          {successTitle.replace(/,?\s*\{visitor\}/, state.visitor ? `, ${state.visitor}` : "")}
-        </p>
-        <p className="mt-4 text-lg text-ink">{successText}</p>
-        <button type="button" onClick={onReset} className={buttonClass("outline", "mt-6")}>
+      <div ref={resultRef} tabIndex={-1} className="space-y-6 focus-visible:outline-none">
+        <Notice kind="success" role="status" title={text.successTitle}>
+          <p>{text.successText.replace(/,?\s*\{visitor\}/, state.visitor ? `, ${state.visitor}` : "")}</p>
+          <p>{successNext}</p>
+          {successResponse && <p>{successResponse}</p>}
+        </Notice>
+        <button type="button" onClick={onReset} className={buttonClass("secondary")}>
           {text.successAgain}
         </button>
       </div>
     );
   }
 
-  const describedBy = (field: LeadField, hint?: string) => [hint, errors[field] ? `${fieldId(field)}-error` : null].filter(Boolean).join(" ") || undefined;
-  const invalid = (field: LeadField) => (errors[field] ? true : undefined);
+  const describedBy = (field: LeadField, hint?: string) => [hint, shown[field] ? `${fieldId(field)}-error` : null].filter(Boolean).join(" ") || undefined;
+  const invalid = (field: LeadField) => (shown[field] ? true : undefined);
   const error = (field: LeadField) =>
-    errors[field] ? (
-      <p id={`${fieldId(field)}-error`} className="mt-2 flex items-center gap-2 text-lg font-semibold text-danger">
-        <Icon name="alert" className="size-5 shrink-0" />
+    shown[field] ? (
+      <p id={`${fieldId(field)}-error`} className="mt-2 flex items-start gap-2 text-small font-semibold text-red-700">
+        <Icon name="alert" className="mt-0.5 size-5 shrink-0" />
         {text.errors[field]}
       </p>
     ) : null;
+  const optional = <span className="font-normal text-gray-600"> {text.optional}</span>;
 
   const serverMessage =
     state.status === "failed" ? failedText : state.status === "unavailable" ? text.unavailable : state.status === "rateLimited" ? text.rateLimited : null;
 
-  const methods: { value: ContactMethod; label: string }[] = [
-    { value: "phone", label: text.methodPhone },
-    ...(allowWhatsapp ? [{ value: "whatsapp" as const, label: text.methodWhatsapp }] : []),
-    { value: "email", label: text.methodEmail },
-  ];
-
   return (
     // method="post" so that, even without JavaScript, personal data never ends up in a URL.
-    <form method="post" noValidate onSubmit={onSubmit} className="space-y-7" aria-busy={pending}>
+    <form ref={formRef} method="post" noValidate onSubmit={onSubmit} className="space-y-7" aria-busy={pending}>
       <input type="hidden" name="locale" value={locale} />
-      <p className="text-base text-muted">{text.requiredNote}</p>
+      <p className="text-small text-gray-600">{text.requiredNote}</p>
       {notices}
 
-      {errorFields.length > 0 && (
-        <div ref={summaryRef} tabIndex={-1} role="alert" className="rounded-control border-2 border-danger bg-danger-soft p-5">
-          <p className="text-lg font-bold text-danger">{text.errorSummary}</p>
-          <ul className="mt-2 list-disc space-y-1 pl-6 text-lg">
+      {errorFields.length > 0 && (attempt > 0 || state.status === "invalid") && (
+        <div ref={summaryRef} tabIndex={-1} role="alert" className="rounded-lg border-2 border-red-700 bg-white p-5">
+          <p className="flex items-center gap-2 font-bold text-red-700">
+            <Icon name="alert" className="size-5 shrink-0" />
+            {text.errorSummary}
+          </p>
+          <ul className="mt-2 list-disc space-y-1 pl-10">
             {errorFields.map((field) => (
               <li key={field}>
-                <a href={`#${fieldId(field)}`} className="font-semibold text-danger underline underline-offset-4">
+                <a href={`#${fieldId(field)}`} className={linkClass}>
                   {text.errors[field]}
                 </a>
               </li>
@@ -138,9 +159,10 @@ function ContactFormInner({ locale, text, consentText, successTitle, successText
       )}
 
       {serverMessage && (
-        <div ref={resultRef} tabIndex={-1} role="alert" className="flex items-start gap-3 rounded-control border-2 border-danger bg-danger-soft p-5 text-lg font-semibold text-danger">
-          <Icon name="alert" className="mt-1 size-5 shrink-0" />
-          <p>{serverMessage}</p>
+        <div ref={resultRef} tabIndex={-1} className="focus-visible:outline-none">
+          <Notice kind="error" role="alert">
+            <p className="font-semibold text-red-700">{serverMessage}</p>
+          </Notice>
         </div>
       )}
 
@@ -148,103 +170,115 @@ function ContactFormInner({ locale, text, consentText, successTitle, successText
         <label htmlFor={fieldId("name")} className={labelClass}>
           {text.name}
         </label>
-        <input id={fieldId("name")} name="name" type="text" autoComplete="name" maxLength={100} required aria-invalid={invalid("name")} aria-describedby={describedBy("name")} className={inputClass} />
+        <input
+          id={fieldId("name")}
+          name="name"
+          type="text"
+          autoComplete="name"
+          maxLength={100}
+          required
+          aria-invalid={invalid("name")}
+          aria-describedby={describedBy("name")}
+          onBlur={() => checkField("name")}
+          onChange={() => recheckIfShown("name")}
+          className={inputClass}
+        />
         {error("name")}
       </div>
 
-      <fieldset aria-describedby={describedBy("method")}>
-        <legend id={fieldId("method")} tabIndex={-1} className={labelClass}>
-          {text.method}
-        </legend>
-        <div className="mt-3 grid gap-3 sm:grid-cols-3">
-          {methods.map((option) => (
-            <label key={option.value} className={choiceClass}>
-              <input type="radio" name="method" value={option.value} checked={method === option.value} onChange={() => setMethod(option.value)} className="size-5 accent-brand" />
-              {option.label}
-            </label>
-          ))}
-        </div>
-        {error("method")}
-      </fieldset>
-
-      {method === "email" ? (
-        <div>
-          <label htmlFor={fieldId("email")} className={labelClass}>
-            {text.email}
-          </label>
-          <input id={fieldId("email")} name="email" type="email" autoComplete="email" maxLength={200} required aria-invalid={invalid("email")} aria-describedby={describedBy("email")} className={inputClass} />
-          {error("email")}
-        </div>
-      ) : (
-        <div>
-          <label htmlFor={fieldId("phone")} className={labelClass}>
-            {text.phone}
-          </label>
-          <p id={`${fieldId("phone")}-hint`} className="mt-1 text-base text-muted">
-            {text.phoneHint}
-          </p>
-          <input
-            id={fieldId("phone")}
-            name="phone"
-            type="tel"
-            inputMode="tel"
-            autoComplete="tel-national"
-            maxLength={30}
-            required
-            aria-invalid={invalid("phone")}
-            aria-describedby={describedBy("phone", `${fieldId("phone")}-hint`)}
-            className={inputClass}
-          />
-          {error("phone")}
-        </div>
-      )}
-
-      <fieldset aria-describedby={describedBy("language")}>
-        <legend id={fieldId("language")} tabIndex={-1} className={labelClass}>
-          {text.language}
-        </legend>
-        <div className="mt-3 grid gap-3 sm:grid-cols-2">
-          {(["en", "es"] as const).map((code) => (
-            <label key={code} className={choiceClass} lang={code}>
-              <input type="radio" name="language" value={code} defaultChecked={code === locale} className="size-5 accent-brand" />
-              {code === "es" ? "Español" : "English"}
-            </label>
-          ))}
-        </div>
-        {error("language")}
-      </fieldset>
-
       <div>
-        <label htmlFor={fieldId("topic")} className={labelClass}>
-          {text.topic}
+        <label htmlFor={fieldId("phone")} className={labelClass}>
+          {text.phone}
         </label>
-        <select id={fieldId("topic")} name="topic" defaultValue="" required aria-invalid={invalid("topic")} aria-describedby={describedBy("topic")} className={`${inputClass} appearance-auto`}>
-          <option value="" disabled>
-            {text.topicPlaceholder}
-          </option>
-          {topics.map((topic) => (
-            <option key={topic.id} value={topic.id}>
-              {topic.label}
-            </option>
-          ))}
-        </select>
-        {error("topic")}
+        <p id={`${fieldId("phone")}-hint`} className="mt-1 text-small text-gray-600">
+          {text.phoneHint}
+        </p>
+        <input
+          id={fieldId("phone")}
+          name="phone"
+          type="tel"
+          inputMode="tel"
+          autoComplete="tel-national"
+          maxLength={30}
+          required
+          aria-invalid={invalid("phone")}
+          aria-describedby={describedBy("phone", `${fieldId("phone")}-hint`)}
+          onBlur={() => checkField("phone")}
+          onChange={() => recheckIfShown("phone")}
+          className={inputClass}
+        />
+        {error("phone")}
       </div>
 
-      <fieldset aria-describedby={describedBy("time")}>
-        <legend id={fieldId("time")} tabIndex={-1} className={labelClass}>
-          {text.time}
-        </legend>
-        <div className="mt-3 grid gap-3 sm:grid-cols-2">
-          {timeSlots.map((slot) => (
-            <label key={slot} className={choiceClass}>
-              <input type="radio" name="time" value={slot} className="size-5 accent-brand" />
-              {text.timeOptions[slot]}
-            </label>
-          ))}
+      <div>
+        <label htmlFor={fieldId("email")} className={labelClass}>
+          {text.email}
+          {optional}
+        </label>
+        <input
+          id={fieldId("email")}
+          name="email"
+          type="email"
+          autoComplete="email"
+          maxLength={200}
+          aria-invalid={invalid("email")}
+          aria-describedby={describedBy("email")}
+          onBlur={() => checkField("email")}
+          onChange={() => recheckIfShown("email")}
+          className={inputClass}
+        />
+        {error("email")}
+      </div>
+
+      <div className="grid gap-7 sm:grid-cols-2">
+        <div>
+          <label htmlFor={fieldId("time")} className={labelClass}>
+            {text.time}
+          </label>
+          <select id={fieldId("time")} name="time" defaultValue="any" aria-invalid={invalid("time")} aria-describedby={describedBy("time")} className={inputClass}>
+            {timeSlots.map((slot) => (
+              <option key={slot} value={slot}>
+                {text.timeOptions[slot]}
+              </option>
+            ))}
+          </select>
+          {error("time")}
         </div>
-        {error("time")}
-      </fieldset>
+        <div>
+          <label htmlFor={fieldId("topic")} className={labelClass}>
+            {text.topic}
+          </label>
+          <select id={fieldId("topic")} name="topic" defaultValue="notSure" aria-invalid={invalid("topic")} aria-describedby={describedBy("topic")} className={inputClass}>
+            {topics.map((topic) => (
+              <option key={topic.id} value={topic.id}>
+                {topic.label}
+              </option>
+            ))}
+          </select>
+          {error("topic")}
+        </div>
+      </div>
+
+      <div>
+        <label htmlFor={fieldId("message")} className={labelClass}>
+          {text.message}
+          {optional}
+        </label>
+        <p id={`${fieldId("message")}-hint`} className="mt-1 text-small text-gray-600">
+          {text.messageHint}
+        </p>
+        <textarea
+          id={fieldId("message")}
+          name="message"
+          rows={4}
+          maxLength={MESSAGE_MAX}
+          aria-invalid={invalid("message")}
+          aria-describedby={describedBy("message", `${fieldId("message")}-hint`)}
+          onBlur={() => checkField("message")}
+          className={inputClass}
+        />
+        {error("message")}
+      </div>
 
       {/* Honeypot: invisible to people and screen readers; bots fill it in. */}
       <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden">
@@ -255,7 +289,7 @@ function ContactFormInner({ locale, text, consentText, successTitle, successText
       </div>
 
       <div>
-        <label className="flex cursor-pointer items-start gap-3 text-lg text-ink">
+        <div className="flex items-start gap-3">
           <input
             id={fieldId("consent")}
             type="checkbox"
@@ -263,26 +297,27 @@ function ContactFormInner({ locale, text, consentText, successTitle, successText
             required
             aria-invalid={invalid("consent")}
             aria-describedby={describedBy("consent")}
-            className="mt-1 size-6 shrink-0 accent-brand"
+            onChange={() => recheckIfShown("consent")}
+            className="mt-0.5 size-6 shrink-0 cursor-pointer rounded-sm accent-navy-900"
           />
-          <span>
-            {consentText}{" "}
-            <a href={privacyHref} className="font-semibold text-accent-strong underline underline-offset-4">
+          <div>
+            <label htmlFor={fieldId("consent")} className="cursor-pointer text-gray-700">
+              {consentText}
+            </label>{" "}
+            <a href={privacyHref} className={linkClass}>
               {text.privacyLink}
             </a>
-          </span>
-        </label>
+          </div>
+        </div>
         {error("consent")}
       </div>
 
-      <p className="flex items-start gap-3 rounded-control bg-canvas p-4 text-base text-muted">
-        <Icon name="info" className="mt-0.5 size-5 shrink-0 text-accent-strong" />
-        {text.sensitiveWarning}
-      </p>
+      <Notice kind="info">
+        <p>{text.sensitiveWarning}</p>
+      </Notice>
 
       <button type="submit" disabled={pending} className={buttonClass("primary", "w-full sm:w-auto")}>
         {pending ? text.sending : text.submit}
-        {!pending && <Icon name="arrow-right" className="size-5" />}
       </button>
     </form>
   );

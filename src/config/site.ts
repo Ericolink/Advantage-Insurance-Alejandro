@@ -27,6 +27,7 @@ export const site: SiteConfig = {
   serviceArea: { value: null, status: "pending", note: "States / counties / cities served (must match licensed states)." },
   languages: { value: ["en", "es"], status: "pending", note: "Languages in which Alejandro offers appointments." },
   hours: { value: null, status: "pending", note: "Business hours, if they should be published." },
+  responseTime: { value: null, status: "pending", note: "Reply time Alejandro can promise after a form request (e.g. one business day)." },
 
   licenses: { value: null, status: "pending", note: "State license number(s) and verification links." },
   npn: { value: null, status: "pending", note: "National Producer Number (verifiable on nipr.com)." },
@@ -51,6 +52,7 @@ export const site: SiteConfig = {
     educationalContent: "pending",
     faq: "pending",
     privacyPolicy: "pending",
+    terms: "pending",
     nonAffiliationNotice: "pending",
     contactConsent: "pending",
     acaConsentProcess: "pending",

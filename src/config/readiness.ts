@@ -45,13 +45,14 @@ export function getPendingItems(site: SiteConfig, env: Record<string, string | u
   if (!isConfirmed(site.serviceArea)) add("serviceArea", "Service area is not confirmed.", true);
   if (!isConfirmed(site.languages)) add("languages", "Appointment languages are not confirmed.", true);
   if (site.hours.status === "pending") add("hours", "Business hours: confirm them or confirm they will not be published.", false);
+  if (site.responseTime.status === "pending") add("responseTime", "Reply time after a form request: confirm it, or confirm none will be promised.", false);
 
   // Credentials
   if (!isConfirmed(site.licenses) || (site.licenses.value?.length ?? 0) === 0) add("licenses", "At least one verified state license is required.", true);
   if (!isConfirmed(site.npn)) add("npn", "NPN is not confirmed.", true);
 
   // Profile
-  if (!isConfirmed(site.photo)) add("photo", "Professional photo is missing (a monogram is shown instead).", false);
+  if (!isConfirmed(site.photo)) add("photo", "Professional photo is missing (the public site shows no photo; review mode shows a placeholder).", false);
   if (site.approvals.biography !== "confirmed") add("biography", "Biography has not been provided/approved.", true);
   if (site.scheduling.status === "pending") add("scheduling", "Scheduling link: provide it or confirm it will not be used.", false);
   if (site.social.status === "pending") add("social", "Social profiles: provide them or confirm there are none.", false);
@@ -71,6 +72,7 @@ export function getPendingItems(site: SiteConfig, env: Record<string, string | u
 
   // Legal and lead capture
   if (site.approvals.privacyPolicy !== "confirmed") add("privacyPolicy", "Privacy notice has not been approved.", true);
+  if (site.approvals.terms !== "confirmed") add("terms", "Terms of use have not been provided/approved (the page stays hidden on the public site until then).", false);
   if (site.approvals.contactConsent !== "confirmed") add("contactConsent", "Contact-consent wording on the form has not been approved.", true);
   if (!hasLeadDestination(env)) add("leadDestination", "No lead destination: set RESEND_API_KEY + LEAD_EMAIL_TO + LEAD_EMAIL_FROM and/or LEAD_WEBHOOK_URL.", true);
 

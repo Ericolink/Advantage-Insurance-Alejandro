@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { alternatePaths, locales, pageIds, pageSlugs, resolveSegments, translatePath, type Route } from "../src/config/routes.ts";
+import { alternatePaths, legacyPaths, locales, pageIds, pageSlugs, resolveSegments, translatePath, type Route } from "../src/config/routes.ts";
 import { site } from "../src/config/site.ts";
 
 const allRoutes: Route[] = [
@@ -40,6 +40,29 @@ describe("routes", () => {
         const segments = alternatePaths(route, site)[locale].split("/").filter(Boolean).slice(1);
         assert.deepEqual(resolveSegments(segments, locale, site), route);
       }
+    }
+  });
+
+  it("matches the route map of the design handoff", () => {
+    const expected = {
+      about: ["/en/about", "/es/sobre-alejandro"],
+      services: ["/en/services", "/es/servicios"],
+      newToMedicare: ["/en/new-to-medicare", "/es/nuevo-en-medicare"],
+      faq: ["/en/faq", "/es/preguntas"],
+      contact: ["/en/contact", "/es/contacto"],
+      privacy: ["/en/privacy", "/es/privacidad"],
+      terms: ["/en/terms", "/es/terminos"],
+      disclosures: ["/en/disclosures", "/es/avisos"],
+    };
+    for (const [id, [en, es]] of Object.entries(expected)) {
+      assert.deepEqual(alternatePaths({ kind: "page", id } as Route, site), { en, es }, id);
+    }
+  });
+
+  it("redirects every legacy URL to a page that exists", () => {
+    for (const { from, to } of legacyPaths) {
+      const [locale, ...rest] = to.split("/").filter(Boolean);
+      assert.notEqual(resolveSegments(rest, locale as "en" | "es", site), null, `${from} → ${to}`);
     }
   });
 

@@ -1,19 +1,20 @@
 import { pathFor } from "@/config/routes";
 import { site } from "@/config/site";
-import type { Locale } from "@/config/types";
+import type { IconName, Locale } from "@/config/types";
 import { approvedOrReview, visible } from "@/config/visibility";
 import { fill, getContent } from "@/lib/i18n";
-import { AgentPortrait, hasPortrait } from "@/components/content/AgentPortrait";
-import { PageHeader } from "@/components/content/PageHeader";
-import { FinalCta } from "@/components/sections/HomeSections";
+import { AgentPhoto, hasAgentPhoto } from "@/components/content/AgentPhoto";
+import { PageHero } from "@/components/content/PageHero";
+import { CTABand } from "@/components/sections/CTABand";
 import { ExternalLink } from "@/components/ui/ExternalLink";
 import { Icon } from "@/components/ui/Icon";
-import { Container } from "@/components/ui/Layout";
+import { Container } from "@/components/ui/Section";
 import { Pending } from "@/components/ui/Pending";
 import { AgentJsonLd } from "@/components/seo/JsonLd";
 
 const languageNames = { en: "English", es: "Español" } as const;
 
+/** Photo, biography, way of working, details and VERIFIED credentials only. */
 export function AboutPage({ locale }: { locale: Locale }) {
   const { ui, about } = getContent(locale);
   const marker = ui.pending.marker;
@@ -24,15 +25,17 @@ export function AboutPage({ locale }: { locale: Locale }) {
   const npn = visible(site.npn);
   const social = visible(site.social);
   const showBio = approvedOrReview(site.approvals.biography) && about.biography.length > 0;
+  const showApproach = approvedOrReview(site.approvals.biography) && about.approach.length > 0;
+  const withPhoto = hasAgentPhoto();
 
-  const detail = (icon: "globe" | "map-pin" | "clock", label: string, value: string | null, pendingLabel: string, pending: boolean) => (
+  const detail = (icon: IconName, label: string, value: string | null, pendingLabel: string, pending: boolean) => (
     <div className="flex gap-4">
-      <span className="grid size-11 shrink-0 place-items-center rounded-control bg-accent-soft text-accent-strong">
+      <span className="grid size-11 shrink-0 place-items-center rounded-md bg-navy-50 text-navy-900">
         <Icon name={icon} className="size-5" />
       </span>
       <div>
-        <dt className="font-bold text-ink">{label}</dt>
-        <dd className="text-lg text-muted">
+        <dt className="font-bold text-navy-900">{label}</dt>
+        <dd className="text-gray-600">
           {value ?? <Pending marker={marker} label={pendingLabel} />}
           {value && pending && (
             <span className="ml-2">
@@ -47,28 +50,36 @@ export function AboutPage({ locale }: { locale: Locale }) {
   return (
     <>
       <AgentJsonLd locale={locale} />
-      <PageHeader locale={locale} title={fill(ui.about.title)} lead={ui.about.role} crumbs={[{ name: ui.nav.about, path: pathFor({ kind: "page", id: "about" }, locale, site) }]} />
+      <PageHero locale={locale} title={fill(ui.about.title)} lead={ui.about.role} crumbs={[{ name: ui.nav.aboutLong, path: pathFor({ kind: "page", id: "about" }, locale, site) }]} />
 
-      <Container className={`grid gap-12 py-14 ${hasPortrait() ? "lg:grid-cols-[22rem_1fr]" : ""}`}>
-        {hasPortrait() && <AgentPortrait locale={locale} className="mx-auto w-full max-w-sm" />}
+      <Container className={`grid gap-12 py-section lg:gap-16 ${withPhoto ? "lg:grid-cols-[22rem_minmax(0,1fr)]" : ""}`}>
+        {withPhoto && (
+          <div>
+            <AgentPhoto locale={locale} placeholder="about" sizes="(min-width: 1024px) 352px, 100vw" className="w-full max-w-sm lg:max-w-none" />
+          </div>
+        )}
 
-        <div className="space-y-12">
-          <section className="max-w-3xl space-y-4">
-            <h2 className="text-2xl font-bold sm:text-3xl">{ui.about.bioTitle}</h2>
-            {showBio ? (
-              about.biography.map((paragraph) => (
-                <p key={paragraph} className="text-lg">
-                  {paragraph}
-                </p>
-              ))
-            ) : (
-              <Pending block marker={marker} label={ui.pending.biography} />
-            )}
+        <div className="max-w-measure space-y-14">
+          <section className="space-y-4">
+            <h2 className="text-h2 font-bold">{ui.about.bioTitle}</h2>
+            {showBio ? about.biography.map((paragraph) => <p key={paragraph}>{paragraph}</p>) : <Pending block marker={marker} label={ui.pending.biography} />}
             {showBio && site.approvals.biography !== "confirmed" && <Pending marker={marker} label={ui.pending.contentReview} />}
           </section>
 
+          {/* "How Alejandro works" must come from Alejandro, in Alejandro's own words (src/content/<lang>/about.ts → approach). */}
+          {showApproach ? (
+            <section className="space-y-4">
+              <h2 className="text-h2 font-bold">{ui.about.approachTitle}</h2>
+              {about.approach.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </section>
+          ) : (
+            <Pending block marker={marker} label={ui.pending.approach} />
+          )}
+
           <section>
-            <h2 className="text-2xl font-bold sm:text-3xl">{ui.about.detailsTitle}</h2>
+            <h2 className="text-h2 font-bold">{ui.about.detailsTitle}</h2>
             <dl className="mt-6 grid gap-6 sm:grid-cols-2">
               {detail("globe", ui.about.languagesLabel, languages ? languages.map((code) => languageNames[code]).join(" · ") : null, ui.pending.languages, site.languages.status === "pending")}
               {detail("map-pin", ui.about.areaLabel, area?.[locale] ?? null, ui.pending.serviceArea, site.serviceArea.status === "pending")}
@@ -76,13 +87,13 @@ export function AboutPage({ locale }: { locale: Locale }) {
             </dl>
           </section>
 
-          <section className="rounded-card border-2 border-line p-6 sm:p-8">
-            <h2 className="flex items-center gap-3 text-2xl font-bold sm:text-3xl">
-              <Icon name="shield" className="size-7 text-accent-strong" />
+          <section className="rounded-lg border border-gray-200 p-6 sm:p-8">
+            <h2 className="flex items-center gap-3 text-h2 font-bold">
+              <Icon name="shield" className="size-7 text-navy-900" />
               {ui.about.credentialsTitle}
             </h2>
-            <p className="mt-3 text-lg text-muted">{ui.about.credentialsLead}</p>
-            <dl className="mt-6 space-y-4 text-lg">
+            <p className="mt-3 text-gray-600">{ui.about.credentialsLead}</p>
+            <dl className="mt-6 space-y-4">
               {licenses && licenses.length > 0 ? (
                 licenses.map((license) => (
                   <div key={`${license.state}-${license.number}`} className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
@@ -124,8 +135,8 @@ export function AboutPage({ locale }: { locale: Locale }) {
 
           {social && social.length > 0 && (
             <section>
-              <h2 className="text-2xl font-bold">{fill(ui.about.socialTitle)}</h2>
-              <ul className="mt-4 flex flex-wrap gap-4 text-lg">
+              <h2 className="text-h3 font-bold">{fill(ui.about.socialTitle)}</h2>
+              <ul className="mt-4 flex flex-wrap gap-6">
                 {social.map((item) => (
                   <li key={item.url}>
                     <ExternalLink href={item.url} newTabLabel={ui.common.opensInNewTab}>
@@ -138,7 +149,7 @@ export function AboutPage({ locale }: { locale: Locale }) {
           )}
         </div>
       </Container>
-      <FinalCta locale={locale} />
+      <CTABand locale={locale} />
     </>
   );
 }

@@ -4,7 +4,7 @@ import { describe, it } from "node:test";
 import { getPendingItems, isLaunchReady, isValidSiteUrl } from "../src/config/readiness.ts";
 import { site } from "../src/config/site.ts";
 import type { SiteConfig } from "../src/config/types.ts";
-import { visible, visibleServices } from "../src/config/visibility.ts";
+import { pageApproval, termsVisible, visible, visibleServices } from "../src/config/visibility.ts";
 
 const ok = <T,>(value: T) => ({ value, status: "confirmed" as const });
 const env = { RESEND_API_KEY: "re_test", LEAD_EMAIL_TO: "agent@agency-domain.com", LEAD_EMAIL_FROM: "Web <web@agency-domain.com>" };
@@ -83,6 +83,18 @@ describe("visibility", () => {
     assert.equal(visible({ value: "+13055550123", status: "pending" }, false), null);
     assert.equal(visible({ value: "+13055550123", status: "pending" }, true), "+13055550123");
     assert.equal(visible({ value: "+13055550123", status: "confirmed" }, false), "+13055550123");
+  });
+
+  it("keeps the Terms page hidden on the public site until its text is approved", () => {
+    assert.equal(termsVisible(site, false), site.approvals.terms === "confirmed");
+    assert.equal(termsVisible(site, true), true);
+  });
+
+  it("treats unapproved drafts as not approved (noindex) and structural pages as approved", () => {
+    const drafts: SiteConfig = { ...site, approvals: { ...site.approvals, faq: "pending", privacyPolicy: "pending" } };
+    assert.equal(pageApproval(drafts, "faq"), "pending");
+    assert.equal(pageApproval(drafts, "privacy"), "pending");
+    assert.equal(pageApproval(drafts, "contact"), "confirmed");
   });
 
   it("never shows services that are not offered, and shows pending ones only in review mode", () => {

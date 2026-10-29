@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { normalizeUsPhone, readLeadForm, validateLead } from "../src/lib/lead-validation.ts";
+import { MESSAGE_MAX, normalizeUsPhone, readLeadForm, validateLead } from "../src/lib/lead-validation.ts";
 
-const rules = { topics: ["medicaid", "general", "notSure"], allowWhatsapp: false };
+const rules = { topics: ["medicaid", "general", "notSure"] };
 
 function form(fields: Record<string, string>) {
   const data = new FormData();
@@ -10,40 +10,41 @@ function form(fields: Record<string, string>) {
   return data;
 }
 
-const valid = { name: "Maria Lopez", method: "phone", phone: "(305) 555-0123", language: "es", topic: "general", time: "morning", consent: "on" };
+const valid = { name: "Maria Lopez", phone: "(305) 555-0123", email: "", time: "morning", topic: "general", message: "", consent: "on" };
 
 describe("contact form validation", () => {
-  it("accepts a complete phone request and normalizes the number", () => {
+  it("accepts name + phone + consent and normalizes the number; email and message are optional", () => {
     const { errors, lead } = validateLead(readLeadForm(form(valid)), rules);
     assert.deepEqual(errors, {});
     assert.equal(lead?.phone, "+13055550123");
     assert.equal(lead?.email, null);
+    assert.equal(lead?.message, null);
   });
 
-  it("requires consent, a name, a topic and a time", () => {
-    const { errors, lead } = validateLead(readLeadForm(form({ ...valid, name: "", consent: "", topic: "", time: "" })), rules);
+  it("requires a name, a valid phone and consent", () => {
+    const { errors, lead } = validateLead(readLeadForm(form({ ...valid, name: "", phone: "123", consent: "" })), rules);
     assert.equal(lead, null);
-    assert.deepEqual(Object.keys(errors).sort(), ["consent", "name", "time", "topic"]);
+    assert.deepEqual(Object.keys(errors).sort(), ["consent", "name", "phone"]);
   });
 
-  it("requires the field that matches the chosen method", () => {
-    assert.ok(validateLead(readLeadForm(form({ ...valid, phone: "123" })), rules).errors.phone);
-    const email = validateLead(readLeadForm(form({ ...valid, method: "email", phone: "", email: "not-an-email" })), rules);
-    assert.ok(email.errors.email);
-    assert.equal(email.errors.phone, undefined);
-    const good = validateLead(readLeadForm(form({ ...valid, method: "email", phone: "305 555 0123", email: "maria@mail.com" })), rules);
-    assert.equal(good.lead?.phone, null, "phone is discarded when the visitor chose email");
+  it("validates the email only when one is given", () => {
+    assert.ok(validateLead(readLeadForm(form({ ...valid, email: "maria.gomez@" })), rules).errors.email);
+    assert.equal(validateLead(readLeadForm(form({ ...valid, email: "maria@mail.com" })), rules).lead?.email, "maria@mail.com");
   });
 
-  it("rejects WhatsApp when it is not enabled, and unknown topics", () => {
-    assert.ok(validateLead(readLeadForm(form({ ...valid, method: "whatsapp" })), rules).errors.method);
-    assert.deepEqual(validateLead(readLeadForm(form({ ...valid, method: "whatsapp" })), { ...rules, allowWhatsapp: true }).errors, {});
+  it("rejects unknown topics and time slots", () => {
     assert.ok(validateLead(readLeadForm(form({ ...valid, topic: "medicare-advantage" })), rules).errors.topic);
+    assert.ok(validateLead(readLeadForm(form({ ...valid, time: "midnight" })), rules).errors.time);
+  });
+
+  it("limits the short message to 500 characters", () => {
+    assert.deepEqual(validateLead(readLeadForm(form({ ...valid, message: "a".repeat(MESSAGE_MAX) })), rules).errors, {});
+    assert.ok(validateLead(readLeadForm(form({ ...valid, message: "a".repeat(MESSAGE_MAX + 1) })), rules).errors.message);
   });
 
   it("ignores any extra (sensitive) field that might be posted", () => {
     const input = readLeadForm(form({ ...valid, ssn: "123-45-6789", medicareNumber: "1EG4-TE5-MK73", dob: "01/01/1960" }));
-    assert.deepEqual(Object.keys(input).sort(), ["consent", "email", "language", "method", "name", "phone", "time", "topic", "trap"]);
+    assert.deepEqual(Object.keys(input).sort(), ["consent", "email", "message", "name", "phone", "time", "topic", "trap"]);
   });
 
   it("normalizes U.S. phone numbers", () => {

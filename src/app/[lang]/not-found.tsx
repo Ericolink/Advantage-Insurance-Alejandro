@@ -12,10 +12,10 @@ export default function NotFound() {
   const locale = params?.lang === "es" ? "es" : "en";
   const ui = locale === "es" ? es : en;
   return (
-    <div className="mx-auto max-w-3xl px-5 py-20 text-center sm:px-8">
+    <div className="mx-auto max-w-3xl px-gutter py-section text-center">
       <title>{ui.meta.notFoundTitle}</title>
-      <h1 className="text-4xl font-bold">{ui.notFound.title}</h1>
-      <p className="mt-5 text-xl text-muted">{ui.notFound.text}</p>
+      <h1 className="text-h1 font-extrabold">{ui.notFound.title}</h1>
+      <p className="mt-5 text-lead text-gray-600">{ui.notFound.text}</p>
       <Link href={`/${locale}`} className={buttonClass("primary", "mt-8")}>
         {ui.notFound.home}
       </Link>

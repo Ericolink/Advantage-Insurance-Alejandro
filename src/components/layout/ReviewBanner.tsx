@@ -5,9 +5,9 @@ import { Icon } from "@/components/ui/Icon";
 export function ReviewBanner({ text }: { text: string }) {
   if (!reviewMode) return null;
   return (
-    <div className="border-b-2 border-pending-line bg-pending-soft text-pending">
-      <p className="mx-auto flex max-w-page items-start gap-2 px-5 py-2 text-base font-semibold sm:px-8">
-        <Icon name="alert" className="mt-0.5 size-5 shrink-0" />
+    <div className="border-b-2 border-dashed border-red-600 bg-white text-red-700" data-pending>
+      <p className="mx-auto flex max-w-page items-start gap-2 px-gutter py-2 text-small font-semibold">
+        <Icon name="pencil" className="mt-0.5 size-5 shrink-0" />
         {text}
       </p>
     </div>
