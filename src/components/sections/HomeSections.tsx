@@ -2,7 +2,11 @@
 // Backgrounds alternate white / light grey (≈60% white · 20% grey); red never fills a section.
 import Image from "next/image";
 import Link from "next/link";
-import heroImage from "../../../public/images/abuelos1.jpg";
+import abuelos1 from "../../../public/images/abuelos1.jpg";
+import abuelos2 from "../../../public/images/abuelos2.jpg";
+import abuelos3 from "../../../public/images/abuelos3.jpg";
+import abuelos4 from "../../../public/images/abuelos4.jpg";
+import abuelos5 from "../../../public/images/abuelos5.jpg";
 import { pathFor } from "@/config/routes";
 import { site } from "@/config/site";
 import type { IconName, Locale, ServiceId } from "@/config/types";
@@ -16,34 +20,53 @@ import { Icon } from "@/components/ui/Icon";
 import { Container, Eyebrow, Section, SectionHeading } from "@/components/ui/Section";
 import { Pending } from "@/components/ui/Pending";
 import { StepList } from "@/components/ui/StepList";
+import { HeroCarousel } from "./HeroCarousel";
 import { ServiceGrid } from "./ServiceCard";
 
 /**
- * Hero with a family photo: behind the text under a white veil on mobile; on desktop it fills the right side
- * and fades into the white text column, so the whole family stays visible.
- * Photo: Mikhail Nilov, Pexels (free to use) — https://www.pexels.com/photo/cute-girl-sitting-in-between-her-grandparents-8307519/
+ * Hero photos, in the same order as ui.home.slides. `position` keeps the faces in frame when the photo is cropped.
+ * abuelos1: Mikhail Nilov, Pexels (free to use) — https://www.pexels.com/photo/cute-girl-sitting-in-between-her-grandparents-8307519/
+ */
+const heroPhotos = [
+  { src: abuelos1, position: "object-[center_30%]" },
+  { src: abuelos2, position: "object-[center_45%]" },
+  { src: abuelos3, position: "object-[center_55%]" },
+  { src: abuelos4, position: "object-[center_35%]" },
+  { src: abuelos5, position: "object-[center_35%]" },
+];
+
+/**
+ * Hero carousel: one family photo per message. On mobile the photo sits behind the text under a white veil; on desktop
+ * it fills the right side and fades into the white text column. Only the first title is the page's <h1>.
  */
 export function Hero({ locale }: { locale: Locale }) {
   const { ui } = getContent(locale);
-  return (
-    <section aria-labelledby="hero-title" className="relative isolate overflow-hidden border-b-4 border-red-600 bg-white">
-      <div className="absolute inset-0 -z-10 lg:left-auto lg:w-1/2 xl:w-3/5">
-        <Image src={heroImage} alt="" fill priority placeholder="blur" sizes="(min-width: 1024px) 60vw, 100vw" className="object-cover object-[center_30%]" />
-        <div aria-hidden="true" className="absolute inset-0 bg-white/85 lg:bg-transparent lg:bg-gradient-to-r lg:from-white lg:to-white/0 lg:to-25%" />
-      </div>
-      <Container className="py-16 sm:py-20 lg:py-32">
-        <div className="max-w-measure lg:max-w-xl">
-          <Eyebrow>{ui.home.eyebrow}</Eyebrow>
-          <h1 id="hero-title" className="mt-5 text-h1 font-extrabold">
-            {ui.home.title}
-          </h1>
-          <p className="mt-6 max-w-measure text-lead text-gray-700">{fill(ui.home.lead)}</p>
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <ScheduleButton ui={ui} locale={locale} location="hero" className="w-full sm:w-auto" />
-            <CallButton ui={ui} location="hero" className="w-full sm:w-auto" />
-          </div>
+  const slides = ui.home.slides.map((slide, index) => {
+    const photo = heroPhotos[index % heroPhotos.length];
+    const Heading = index === 0 ? "h1" : "h2";
+    return (
+      <div key={slide.title} className="relative isolate h-full">
+        <div className="absolute inset-0 -z-10 lg:left-auto lg:w-1/2 xl:w-3/5">
+          <Image src={photo.src} alt="" fill priority={index === 0} placeholder="blur" sizes="(min-width: 1024px) 60vw, 100vw" className={`object-cover ${photo.position}`} />
+          <div aria-hidden="true" className="absolute inset-0 bg-white/85 lg:bg-transparent lg:bg-gradient-to-r lg:from-white lg:to-white/0 lg:to-25%" />
         </div>
-      </Container>
+        <Container className="pt-16 pb-32 sm:pt-20 lg:pt-28 lg:pb-40">
+          <div className="max-w-measure lg:max-w-xl">
+            <Eyebrow>{ui.home.eyebrow}</Eyebrow>
+            <Heading className="mt-5 text-h1 font-extrabold">{slide.title}</Heading>
+            <p className="mt-6 max-w-measure text-lead text-gray-700">{fill(slide.text)}</p>
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <ScheduleButton ui={ui} locale={locale} location="hero" className="w-full sm:w-auto" />
+              <CallButton ui={ui} location="hero" className="w-full sm:w-auto" />
+            </div>
+          </div>
+        </Container>
+      </div>
+    );
+  });
+  return (
+    <section className="relative overflow-hidden border-b-4 border-red-600 bg-white">
+      <HeroCarousel slides={slides} labels={ui.home.carousel} />
     </section>
   );
 }

@@ -88,7 +88,37 @@ export const ui: UiContent = {
   home: {
     eyebrow: "Orientación en seguros médicos",
     title: "Respuestas claras sobre sus opciones de cobertura médica",
-    lead: "Hable con {name} sobre sus preguntas, en lenguaje sencillo y a su propio ritmo. Sus familiares también son bienvenidos.",
+    slides: [
+      {
+        title: "Entienda su cobertura médica con confianza",
+        text: "Hable con {name} para entender sus opciones de seguro médico y encontrar respuestas a sus preguntas. Tómese su tiempo y, si lo desea, venga acompañado de un familiar.",
+      },
+      {
+        title: "Respuestas sobre seguros médicos, sin confusiones",
+        text: "Los seguros médicos pueden parecer complicados, pero recibir ayuda no debería serlo. {name} le explica sus opciones en términos sencillos, para que usted y su familia se sientan con más confianza.",
+      },
+      {
+        title: "Le ayudamos a entender su cobertura médica",
+        text: "¿No sabe qué opciones de cobertura médica son adecuadas para usted? {name} está aquí para escucharle, responder sus preguntas y ayudarle a entender sus opciones a su propio ritmo.",
+      },
+      {
+        title: "Sus preguntas sobre cobertura médica merecen respuestas claras",
+        text: "Obtenga respuestas directas a sus preguntas sobre seguros médicos, sin prisas. {name} le recibe a usted y a su familia para una conversación amable y personal.",
+      },
+      {
+        title: "Orientación de confianza, a su propio ritmo",
+        text: "Elegir una cobertura médica es una decisión personal. Hable con {name} para recibir una orientación paciente y fácil de entender; sus familiares también pueden participar en la conversación.",
+      },
+    ],
+    carousel: {
+      label: "Mensajes de bienvenida",
+      slide: "{n} de {total}",
+      previous: "Diapositiva anterior",
+      next: "Diapositiva siguiente",
+      goTo: "Mostrar diapositiva {n}",
+      pause: "Pausar presentación",
+      play: "Reanudar presentación",
+    },
     portraitAlt: "Retrato de {name}",
     introTitle: "Por qué hablar con un agente",
     intro: [

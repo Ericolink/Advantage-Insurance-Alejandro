@@ -84,8 +84,40 @@ export const ui = {
   },
   home: {
     eyebrow: "Health insurance guidance",
+    /** Used for the social-sharing image. The hero itself shows `slides`. */
     title: "Clear answers about your health coverage options",
-    lead: "Talk with {name} about your questions, in plain language and at your own pace. Family members are welcome too.",
+    /** Hero carousel, one entry per photo (same order as the photos in HomeSections.tsx). */
+    slides: [
+      {
+        title: "Understand Your Health Coverage with Confidence",
+        text: "Talk with {name} to understand your health insurance options and find answers to your questions. Take your time, and feel free to bring a family member along.",
+      },
+      {
+        title: "Health Insurance Answers, Without the Confusion",
+        text: "Health insurance can feel complicated, but getting help shouldn't be. {name} explains your options in simple terms, so you and your family can feel more confident.",
+      },
+      {
+        title: "Helping You Make Sense of Your Health Coverage",
+        text: "Not sure which health coverage options are right for you? {name} is here to listen, answer your questions, and help you understand your choices at your own pace.",
+      },
+      {
+        title: "Your Health Coverage Questions Deserve Clear Answers",
+        text: "Get straightforward answers to your health insurance questions without feeling rushed. {name} welcomes you and your family for a friendly, one-on-one conversation.",
+      },
+      {
+        title: "Guidance You Can Trust, at Your Own Pace",
+        text: "Choosing health coverage is a personal decision. Talk with {name} for patient, easy-to-understand guidance, with family members welcome to join the conversation.",
+      },
+    ],
+    carousel: {
+      label: "Welcome messages",
+      slide: "{n} of {total}",
+      previous: "Previous slide",
+      next: "Next slide",
+      goTo: "Show slide {n}",
+      pause: "Pause slideshow",
+      play: "Play slideshow",
+    },
     portraitAlt: "Portrait of {name}",
     introTitle: "Why talk with an agent",
     intro: [
