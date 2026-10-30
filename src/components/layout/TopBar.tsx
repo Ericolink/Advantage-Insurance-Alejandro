@@ -18,7 +18,8 @@ export function TopBar({ locale }: { locale: Locale }) {
   const states = licenses?.length ? [...new Set(licenses.map((license) => license.state))].join(", ") : null;
 
   return (
-    <div data-surface="dark" className="bg-navy-900 text-white">
+    // Below 1024px the bar would be empty (the language switch lives in the mobile menu), so it is hidden.
+    <div data-surface="dark" className="hidden bg-navy-900 text-white lg:block">
       <Container className="flex min-h-14 items-center justify-end gap-6 py-1 lg:justify-between">
         <p className="hidden text-small lg:block">
           {states ? `${ui.topBar.licensed} · ${states}` : ui.topBar.agent}
@@ -36,7 +37,10 @@ export function TopBar({ locale }: { locale: Locale }) {
               {phone.display}
             </a>
           )}
-          <LanguageSwitch locale={locale} groupLabel={ui.topBar.languageLabel} switchLabel={ui.nav.switchToLabel} />
+          {/* Below 1280px it is inside the mobile menu instead. */}
+          <div className="hidden xl:block">
+            <LanguageSwitch locale={locale} groupLabel={ui.topBar.languageLabel} switchLabel={ui.nav.switchToLabel} />
+          </div>
         </div>
       </Container>
     </div>
