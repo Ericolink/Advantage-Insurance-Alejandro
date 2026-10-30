@@ -61,15 +61,13 @@ export function SiteFooter({ locale }: { locale: Locale }) {
                 <Pending tone="dark" marker={ui.pending.marker} label={ui.pending.email} />
               )}
             </li>
-            <li>
-              {area ? (
+            {area && (
+              <li>
                 <p className="flex min-h-tap items-center gap-2">
                   <Icon name="map-pin" className="size-5" /> {area[locale]}
                 </p>
-              ) : (
-                <Pending tone="dark" marker={ui.pending.marker} label={ui.pending.serviceArea} />
-              )}
-            </li>
+              </li>
+            )}
           </ul>
         </div>
       </Container>
@@ -78,7 +76,16 @@ export function SiteFooter({ locale }: { locale: Locale }) {
         <Container className="space-y-6 py-8">
           <LegalNav locale={locale} />
           <DisclosureBlock locale={locale} />
-          <p className="text-small text-white/85">{fill(ui.footer.rights, { year: new Date().getFullYear() })}</p>
+          <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 text-small text-white/85">
+            <p>{fill(ui.footer.rights, { year: new Date().getFullYear() })}</p>
+            <p>
+              {ui.footer.developedBy}{" "}
+              <a href="https://github.com/Ericolink" target="_blank" rel="noopener noreferrer" className="font-bold text-white underline underline-offset-4 hover:no-underline">
+                Ericolink
+                <span className="sr-only"> {ui.common.opensInNewTab}</span>
+              </a>
+            </p>
+          </div>
         </Container>
       </div>
     </footer>

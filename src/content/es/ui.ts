@@ -249,6 +249,7 @@ export const ui: UiContent = {
     marketingTitle: "Avisos de marketing de productos de seguros",
     coverageText: "La disponibilidad, los beneficios, los costos y los requisitos de elegibilidad varían según el plan y la ubicación. Consulte la documentación oficial del plan para conocer sus términos y condiciones.",
     rights: "© {year} {brand}.",
+    developedBy: "Desarrollado por",
   },
   analytics: {
     title: "Analítica",

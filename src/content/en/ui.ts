@@ -248,6 +248,7 @@ export const ui = {
     marketingTitle: "Insurance product marketing notices",
     coverageText: "Availability, benefits, costs and eligibility requirements vary by plan and location. Review the official plan documents for their terms and conditions.",
     rights: "© {year} {brand}.",
+    developedBy: "Developed by",
   },
   analytics: {
     title: "Analytics",
