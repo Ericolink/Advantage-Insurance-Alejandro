@@ -115,8 +115,6 @@ export const ui = {
       previous: "Previous slide",
       next: "Next slide",
       goTo: "Show slide {n}",
-      pause: "Pause slideshow",
-      play: "Play slideshow",
     },
     portraitAlt: "Portrait of {name}",
     introTitle: "Why talk with an agent",

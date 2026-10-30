@@ -116,8 +116,6 @@ export const ui: UiContent = {
       previous: "Diapositiva anterior",
       next: "Diapositiva siguiente",
       goTo: "Mostrar diapositiva {n}",
-      pause: "Pausar presentación",
-      play: "Reanudar presentación",
     },
     portraitAlt: "Retrato de {name}",
     introTitle: "Por qué hablar con un agente",
