@@ -145,7 +145,8 @@ export function ContactPage({ locale }: { locale: Locale }) {
           </div>
         </section>
 
-        {showsTpmoProducts() && <TpmoNotice locale={locale} />}
+        {/* Only once the real TPMO text exists: no "pending" box under the form. */}
+        {showsTpmoProducts() && visible(site.tpmoDisclaimer) && <TpmoNotice locale={locale} />}
       </Container>
     </>
   );
