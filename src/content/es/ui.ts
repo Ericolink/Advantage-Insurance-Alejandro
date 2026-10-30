@@ -64,7 +64,6 @@ export const ui: UiContent = {
     serviceArea: "ZONA DE SERVICIO",
     languages: "IDIOMAS DE ATENCIÓN — confirmar",
     hours: "HORARIO DE ATENCIÓN",
-    licensedStates: "ESTADOS CON LICENCIA — confirmar",
     licenses: "NÚMERO(S) DE LICENCIA ESTATAL",
     npn: "NPN — National Producer Number",
     photoTitle: "Espacio para fotografía",

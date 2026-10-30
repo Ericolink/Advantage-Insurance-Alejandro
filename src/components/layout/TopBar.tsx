@@ -1,11 +1,10 @@
 import { site } from "@/config/site";
 import type { Locale } from "@/config/types";
-import { reviewMode, visible } from "@/config/visibility";
+import { visible } from "@/config/visibility";
 import { getContact, telHref } from "@/lib/contact";
 import { fill, getContent } from "@/lib/i18n";
 import { Icon } from "@/components/ui/Icon";
 import { Container } from "@/components/ui/Section";
-import { Pending } from "@/components/ui/Pending";
 import { LanguageSwitch } from "./LanguageSwitch";
 
 /**
@@ -23,12 +22,6 @@ export function TopBar({ locale }: { locale: Locale }) {
       <Container className="flex min-h-14 items-center justify-end gap-6 py-1 lg:justify-between">
         <p className="hidden text-small lg:block">
           {states ? `${ui.topBar.licensed} · ${states}` : ui.topBar.agent}
-          {reviewMode && site.licenses.status === "pending" && (
-            <>
-              {" · "}
-              <Pending tone="dark" marker={ui.pending.marker} label={ui.pending.licensedStates} />
-            </>
-          )}
         </p>
         <div className="flex items-center gap-4">
           {phone && (

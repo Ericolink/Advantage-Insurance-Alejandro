@@ -61,7 +61,6 @@ export const ui = {
     serviceArea: "SERVICE AREA",
     languages: "APPOINTMENT LANGUAGES — confirm",
     hours: "BUSINESS HOURS",
-    licensedStates: "STATES LICENSED — confirm",
     licenses: "STATE LICENSE NUMBER(S)",
     npn: "NPN — National Producer Number",
     photoTitle: "Photo placeholder",
